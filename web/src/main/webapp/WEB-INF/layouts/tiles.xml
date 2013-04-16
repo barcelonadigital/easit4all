@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>    
+	
+	<definition name="facebook.content.fe" templateExpression="/WEB-INF/views/facebook/feContent.jsp">
+	</definition>
+
+    <definition name="facebook.content" templateExpression="/WEB-INF/views/facebook/fbContent.jsp">
+    	<put-attribute name="facebook.content" value="facebook.content.fe" cascade="true"/>
+	</definition>
+	
+	<!-- <definition name="twitter.content" template="/WEB-INF/views/facebook/twContent.jsp">
+	</definition>  -->
+	
+	<definition name="page" templateExpression="/WEB-INF/layouts/page.jsp">
+		<put-attribute name="content" value="facebook.content" cascade="true"></put-attribute>
+		<!-- <put-attribute name="content" value="twitter.content" cascade="true"></put-attribute> -->
+	</definition>
+        
+</tiles-definitions>

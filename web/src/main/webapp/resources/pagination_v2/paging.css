@@ -1,0 +1,79 @@
+
+/*
+Plugin Name: WP-Digg Style Paginator
+Plugin URI: http://www.mis-algoritmos.com/2007/09/09/wp-digg-style-pagination-plugin-v-10/
+Author: Victor De la Rocha
+Author URI: http://www.mis-algoritmos.com
+*/
+/*CSS Yahoo new version style pagination*/
+
+#pagination {
+		padding: 0.2625em;
+		text-align:center;
+		font-family:Tahoma,Helvetica,sans-serif;
+		font-size:.85em;
+		//height: 7em;
+		float: right;
+		display:inline-block;
+}
+
+//#pagination .pagination-list {
+//	padding: 0.2625em;
+//	margin-left:0.5em;
+//	margin-right: 0.75em;
+//}
+
+#pagination .ym-button{
+	margin: 0;
+	padding: 0 0.5em;
+}
+	div.pagination {
+		padding: 0.2625em;
+		margin: 1em;
+		text-align:center;
+		font-family:Tahoma,Helvetica,sans-serif;
+		font-size:.85em;
+		height: 4.5em;
+	}
+	
+
+	div.pagination a {
+		border: 1px solid #ccdbe4;
+		margin-right:0.2625em;
+		padding:0.175em 0.7em;
+
+		background-position:bottom;
+		text-decoration: none;
+
+		color: #6E7F80;		
+	}
+	div.pagination a:hover, div.pagination a:active {
+		border: 1px solid #3B3C36;
+		background-image:none;
+		background-color:#efefef;
+		color: black;
+	}
+	div.pagination span.current {
+		margin-right: 0.2625em;
+		padding:0.175em 0.525em;
+		
+		font-weight: bold;
+		color: #000;
+	}
+	div.pagination span.disabled {
+		display:none;
+	}
+	div.pagination a.next{
+		border:2px solid #ccdbe4;
+		margin:0 0 0 0.875em;
+	}
+	div.pagination a.next:hover{
+		border:2px solid #2b55af;
+	}
+	div.pagination a.prev{
+		border:2px solid #ccdbe4;
+		margin:0 0.875em 0 0;
+	}
+	div.pagination a.prev:hover{
+		border:2px solid #2b55af;
+	}

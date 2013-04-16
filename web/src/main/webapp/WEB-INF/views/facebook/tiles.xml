@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<definition name="facebook/profile" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/profile.jsp" cascade="true"/>
+	</definition>
+
+	<definition name="facebook/feed" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/homeFeed.jsp" cascade="true"/>
+	</definition>
+
+	<definition name="facebook/friends" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/friends.jsp" cascade="true"/>
+	</definition>
+
+	<definition name="facebook/albums" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/albums.jsp" cascade="true"/>
+	</definition>
+
+	<definition name="facebook/albums/album" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/album.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/albums/upload" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/uploadPhoto.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/videos" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/videos.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/videos/video" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/video.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/videos/videos/upload" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/uploadVideo.jsp" cascade="true"/>
+	</definition>
+
+	<definition name="facebook/search" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/searchResults.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/events" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/events.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/events/event" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/event.jsp" cascade="true" />
+	</definition>
+	
+	<definition name="facebook/groups" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/groups.jsp" cascade="true" />
+	</definition>
+	
+	<definition name="facebook/groups/group" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/group.jsp" cascade="true" />
+	</definition>
+	
+	<definition name="facebook/wall" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/wall.jsp" cascade="true" />
+	</definition>
+	
+	<definition name="facebook/notifications" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/notifications.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/friends/lists" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/friendLists.jsp" cascade="true" />
+	</definition>
+	
+	<definition name="facebook/search/filter" extends="page">
+		<put-attribute name="facebook.content" value="/WEB-INF/views/facebook/filteredSearch.jsp" cascade="true" />
+	</definition>
+	
+	 <definition name="facebook/friend/wall" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/wall.jsp"  cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/friend/profile" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/profile.jsp"  cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/friend/albums" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/albums.jsp"  cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/friend/albums/album" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/album.jsp"  cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/friend/videos" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/videos.jsp"  cascade="true"/>
+	</definition> 
+	
+	<definition name="facebook/friend/videos/video" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/video.jsp"  cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/friend/users" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/users.jsp"  cascade="true"/>
+	</definition>  
+	
+	<definition name="facebook/event/info" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/eventInfo.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/event/wall" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/wall.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/group/about" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/groupInfo.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/group/wall" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/wall.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/group/members" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/users.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/search" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/searchResults.jsp" cascade="true" />
+	</definition>
+	
+<!-- <definition name="facebook/search/users" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/users.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/search/groups" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/groups.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/search/events" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/events.jsp" cascade="true"/>
+	</definition>
+	
+	<definition name="facebook/search/feeds" extends="page">
+		<put-attribute name="facebook.content.fe" value="/WEB-INF/views/facebook/feed.jsp" cascade="true"/>
+	</definition> -->	
+	
+</tiles-definitions>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<definition name="topSitesPlugin" extends="page">
+		<put-attribute name="content" value="/WEB-INF/views/plugins/topSites.jsp" />
+	</definition>
+	
+	<definition name="favouritesPlugin" extends="page">
+		<put-attribute name="content" value="/WEB-INF/views/plugins/favourites.jsp" />
+	</definition>
+
+	<definition name="cosmSensorsPlugin" extends="page">
+		<put-attribute name="content" value="/WEB-INF/views/plugins/cosmSensors.jsp" />
+	</definition>
+	
+	<definition name="newsPlugin" extends="page">
+		<put-attribute name="content" value="/WEB-INF/views/plugins/news.jsp" />
+	</definition>
+	
+</tiles-definitions>

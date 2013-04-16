@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:oxm="http://www.springframework.org/schema/oxm"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+				http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd
+				http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+				http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- JPA EntityManagerFactory: configure the adapter, the location of persistence.xml, etc. -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	    <property name="dataSource" ref="dataSource"/>
+	    <property name="persistenceXmlLocation" value="classpath:META-INF/persistence.xml"></property>
+	    <property name="persistenceUnitName" value="SaaphoSocialPersistenceUnit"/>
+	    <property name="jpaVendorAdapter">
+	        <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+	            <property name="showSql" value="false"/>
+	            <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect"/>
+	        </bean>
+	    </property>
+    </bean>
+
+	<!-- Base package for all DAO JPA implementations (marked with the @Repository annotation) -->
+	<context:component-scan base-package="org.easit.dao.jpa"/>
+
+	<!-- Enable declarative transaction management. This allows to configure transactional behaviour directly
+ 	in the code with @Transactional annotations, instead of declaring it in bean configuration files (like this one) 
+ 	Declaring this element without any parameter, makes Spring expect a bean called transactionManager 
+ 	-->
+	<tx:annotation-driven/> 
+
+	<!-- Transaction Config -->
+	<bean id="transactionManager" 
+      		class="org.springframework.orm.jpa.JpaTransactionManager" 
+      		p:entityManagerFactory-ref="entityManagerFactory"
+      		p:dataSource-ref="dataSource"/> 
+ 
+ 	
+	<!-- This will ensure that hibernate or jpa exceptions are automatically translated into
+	Spring's generic DataAccessException hierarchy for those classes annotated with Repository
+	http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/dao/annotation/PersistenceExceptionTranslationPostProcessor.html
+	-->
+	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+	
+	<!-- bean post-processor for JPA annotations; injects the Entity Manager and/or Entity Manager Factory where indicated
+	(see GenericDaoJpa class for an example) 
+	http://static.springsource.org/spring/docs/3.0.x/api/org/springframework/orm/jpa/support/PersistenceAnnotationBeanPostProcessor.html
+	-->
+  	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+    
+</beans>
