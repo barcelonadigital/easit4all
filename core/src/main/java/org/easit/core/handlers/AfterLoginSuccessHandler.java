@@ -41,7 +41,7 @@ public class AfterLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
     private Environment environment;
 
     @Inject
-    private PreferencesDataManager preferencesData;
+    private PreferencesDataManager preferencesManager;
 
     @Inject
     private PluginManager pluginManager;
@@ -110,7 +110,8 @@ public class AfterLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
 	try {
 	    // load preferences from Server or Database
-	    preferences = preferencesData.loadPreferences(acc);
+	    preferences = preferencesManager.loadPreferences(acc);
+	    logger.info("Loading user preferences from the  database/url server");
 
 	} catch (Exception e1) {
 	    // TODO Auto-generated catch block

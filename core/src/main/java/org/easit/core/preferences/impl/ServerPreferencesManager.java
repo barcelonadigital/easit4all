@@ -70,7 +70,6 @@ public class ServerPreferencesManager implements PreferencesDataManager {
 	    
 	    //Try to insert them
 	    if (!strPrefs.isEmpty() && strPrefs.toLowerCase().indexOf("error") == -1) {
-		strPrefs = strPrefs.replaceAll(getIdentifiers(strPrefs), "");
 		prefsC4A = parseToObjectPreferences(strPrefs);
 		appPreferences = convertToUIOptionsFluid(prefsC4A);
 	    }
@@ -84,19 +83,15 @@ public class ServerPreferencesManager implements PreferencesDataManager {
     public void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user) throws Exception {
 	try {
 	    PreferencesC4A prefsC4A = null;
-	    String strPrefs = "", identifiers = "";
+	    String strPrefs = "";
 
 	    // Get preferences from server
 	    strPrefs = getPreferencesFromServer(user);
 	    
 	    //Try to insert them
 	    if (!strPrefs.isEmpty() && strPrefs.toLowerCase().indexOf("error") == -1) {
-		identifiers = getIdentifiers(strPrefs);
-		strPrefs = strPrefs.replaceAll(identifiers, "");
-		prefsC4A = parseToObjectPreferences(strPrefs);
-		
+		prefsC4A = parseToObjectPreferences(strPrefs);		
 		strPrefs = mergePreferences(prefsC4A, preferences);
-		strPrefs = "{" + identifiers + strPrefs.substring(1, strPrefs.length());
 	    } 
 	    else { // Insert preferences
 		prefsC4A = new PreferencesC4A();
@@ -154,9 +149,8 @@ public class ServerPreferencesManager implements PreferencesDataManager {
     private PreferencesC4A parseToObjectPreferences(String strPrefs) throws JsonParseException, JsonMappingException, IOException {
 	// Map json to Object preferences
 	ObjectMapper mapper = new ObjectMapper().setVisibility(JsonMethod.CREATOR, Visibility.NONE);
-
 	PreferencesC4A prefsC4A = mapper.readValue(strPrefs, PreferencesC4A.class);
-	prefsC4A.any().get(psCommon + "fontFaceFontName").get(0).getValue();
+	
 	return prefsC4A;
     }
 
@@ -184,7 +178,7 @@ public class ServerPreferencesManager implements PreferencesDataManager {
 	// Fontsize
 	List<PreferencesValue> list1 = new ArrayList<PreferencesValue>();
 	PreferencesValue val1 = new PreferencesValue();
-	val1.setValue((int) Math.round(preferences.getTextSize() * 12 / 0.875));
+	val1.setValue(preferences.getTextSize() * 10.0);
 	list1.add(val1);
 	prefsC4A.set(psCommon + "fontSize", list1);
 
@@ -240,7 +234,42 @@ public class ServerPreferencesManager implements PreferencesDataManager {
 	val8.setValue(preferences.isInvertImages());
 	list8.add(val8);
 	prefsC4A.set(psCommon + "invertImages", list8);
+	
+	// links
+	List<PreferencesValue> list9 = new ArrayList<PreferencesValue>();
+	PreferencesValue val9 = new PreferencesValue();
+	val9.setValue(preferences.isLinks());
+	list9.add(val9);
+	prefsC4A.set(psCommon + "links", list9);	
 
+	// toc
+	List<PreferencesValue> list10 = new ArrayList<PreferencesValue>();
+	PreferencesValue val10 = new PreferencesValue();
+	val10.setValue(preferences.isToc());
+	list10.add(val10);
+	prefsC4A.set(psCommon + "toc", list10);
+
+	// inputs larger
+	List<PreferencesValue> list11 = new ArrayList<PreferencesValue>();
+	PreferencesValue val11 = new PreferencesValue();
+	val11.setValue(preferences.isInputsLarger());
+	list11.add(val11);
+	prefsC4A.set(psCommon + "inputsLarger", list11);
+
+	// layout
+	List<PreferencesValue> list12 = new ArrayList<PreferencesValue>();
+	PreferencesValue val12 = new PreferencesValue();
+	val12.setValue(preferences.isLayout());
+	list12.add(val12);
+	prefsC4A.set(psCommon + "layout", list12);
+	
+	// line spacing
+	List<PreferencesValue> list13 = new ArrayList<PreferencesValue>();
+	PreferencesValue val13 = new PreferencesValue();
+	val13.setValue(preferences.getLineSpacing());
+	list13.add(val13);
+	prefsC4A.set(psCommon + "lineSpacing", list13);	
+	
 	StringWriter strPreferences = new StringWriter();
 	ObjectMapper mapper = new ObjectMapper();
 	mapper.getSerializationConfig().without(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS);
@@ -275,20 +304,26 @@ public class ServerPreferencesManager implements PreferencesDataManager {
 	    return "default";
     }
 
+    /**
+     * For fontSize, supposing that it comes as px from C4A, convert it to em 1px = 0.0625 em
+     * 0.875 = 14px (default fontsize app) 
+     * @param prefsC4A
+     * @return
+     */
     private EasitApplicationPreferences convertToUIOptionsFluid(PreferencesC4A prefsC4A) {
 	EasitApplicationPreferences prefs = new EasitApplicationPreferences();
-	prefs.setTextSize((Integer) prefsC4A.any().get(psCommon + "fontSize").get(0).getValue() / 12 * 0.875);
+	prefs.setTextSize(Double.valueOf(prefsC4A.any().get(psCommon + "fontSize").get(0).getValue() + "") / 10.0);
 	String fontName = prefsC4A.any().get(psCommon + "fontFaceFontName").get(0).getValue().toString();
 	prefs.setTextFont(convertFontName(fontName.substring(1, fontName.lastIndexOf("]"))));
 	prefs.setTheme(convertThemeName(prefsC4A.any().get(psCommon + "foregroundColor").get(0).getValue().toString(), prefsC4A.any().get(psCommon + "backgroundColor").get(0).getValue().toString()));
 	prefs.setMagnification((Integer) prefsC4A.any().get(psCommon + "magnification").get(0).getValue());
 	prefs.setTracking(prefsC4A.any().get(psCommon + "tracking").get(0).getValue().toString());
 	prefs.setInvertImages((Boolean) prefsC4A.any().get(psCommon + "invertImages").get(0).getValue());
-	prefs.setInputsLarger(defaultInputsLarger);
-	prefs.setLayout(defaultLayout);
-	prefs.setLineSpacing(defaultLineSpacing);
-	prefs.setLinks(defaultLinks);
-	prefs.setToc(defaultToc);
+	prefs.setInputsLarger((Boolean) prefsC4A.any().get(psCommon + "inputsLarger").get(0).getValue());
+	prefs.setLayout((Boolean) prefsC4A.any().get(psCommon + "layout").get(0).getValue());
+	prefs.setLineSpacing(Double.valueOf(prefsC4A.any().get(psCommon + "lineSpacing").get(0).getValue() + ""));
+	prefs.setLinks((Boolean) prefsC4A.any().get(psCommon + "links").get(0).getValue());
+	prefs.setToc((Boolean) prefsC4A.any().get(psCommon + "toc").get(0).getValue());
 
 	return prefs;
     }

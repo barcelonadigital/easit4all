@@ -52,7 +52,7 @@
 				<div class="ym-fbox-button">
 					<button type="submit" title="Sign in" class="ym-button">Sign in</button>
 					<!-- class="ym-button ym-disabled" href="<c:url value="/signup"/>"  --> 
-					<a title="Sign up" class="ym-button" style="float: right;" href="<c:url value="/signup"/>" >Sign up</a>
+					<a title="Sign up" class="ym-button ym-disabled" style="float: right;">Sign up</a>
 				</div>
 				</div>
 			</form>
@@ -60,7 +60,8 @@
 			<div class="ym-g85 ym-gl">
 				<div class="ym-gbox-left">
 					<form name="tw_signin" id="tw_signin" action="<c:url value="/signin/twitter"/>" method="POST" >
-						<input type="button" title="Sign in with Twitter" class="button_signInTwitter"  onclick="document.tw_signin.submit()"/>
+					<!-- onclick="document.tw_signin.submit()" -->
+						<input type="button" title="Sign in with Twitter" class="button_signInTwitter" />
 					</form>
 				</div>
 			</div>
@@ -70,7 +71,8 @@
 				        <input type="hidden" name="scope" value="publish_stream, user_photos, read_stream, user_videos, manage_friendlists, 
 				        read_friendlists, user_events, user_groups, manage_notifications, read_requests, friends_photos, friends_events, email, 
 				        rsvp_events" />
-				        <input type="button" title="Sign in with Facebook" class="button_signInFacebook" onclick="document.fb_signin.submit()"/>
+				        <!-- onclick="document.fb_signin.submit()" -->
+				        <input type="button" title="Sign in with Facebook" class="button_signInFacebook" />
 					</form>					
 				</div>
 			</div>		
