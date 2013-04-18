@@ -5,9 +5,9 @@ Description
 -----------
 
 The EASIT4ALL provides a website that enables an easy and accessible way to use social networks, auto-configuration
-of visual features and a simple and intuitive graphical interface
+of visual features and a simple and intuitive graphical interface. The official website is available at http://www.easit4all.com 
 
-The web application is a MAVEN project developed using Spring MVC, Security and Social frameworks
+This web application uses MAVEN and is developed in Java using Spring Framework (MVC, Security and Social)
  
 
 License
@@ -47,3 +47,12 @@ Running Tests
 
 The maven installation by default executes all tests created for the project
 - mvn clean install
+
+
+Acknowledgements
+----------------
+
+The idea of easit4all project was originally created for the European Project cloud4all (FP7-289016) by the Active Independent Living Group 
+within the eHealth Research Department of Barcelona Digital.
+
+  
