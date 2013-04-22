@@ -6,8 +6,8 @@ Description
 
 The EASIT4ALL project aims to provide to any person independently of its disability an accessible way  
 to use main functionalities of social networks. Thus, Easit4all solution consits of a web interface that merges in a
-simple and intuitive way different social networks. Additionally the tool provides a set of plugins 
-to make more usable and accessible the tool to the final users (e.g. such as most common operations or self-configuration of visual features).
+simple and intuitive way different social networks. Additionally, the tool provides a set of plugins 
+that makes it more usable and accessible for the final users (e.g. most common operations or self-configuration of visual features).
 The ultimate objective of the tool is the auto-configuration of the application accessible features to the user needs. 
 This functionality will be provided thanks to the GPII/Cloud4all framework.
 
@@ -73,3 +73,4 @@ Authors
 -------
 
 Xavier Rafael-Palou (main contact) and Cristina Palmero
+
