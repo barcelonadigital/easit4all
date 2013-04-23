@@ -35,7 +35,7 @@ Installation
 Basically, we use maven to compile and launch the website. 
 (Maven 2.0 must be installed and configured in the local machine)
 
-1.- Add jar files included in lib folder into your local maven repository
+1.- Execute install file located in lib folder. This script will install local jar files into your local maven repository
 
 2.- Create the MySQL schema database
 - Use mysql dump file which is found at easit4all/dao/src/db
