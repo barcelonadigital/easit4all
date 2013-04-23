@@ -15,12 +15,12 @@ The official website is available at http://www.easit4all.com
 
 Technicalities
 --------------
-The Easit4All solution is simple Java based framework composed of 
+The Easit4All solution is a simple framework composed of 
 three main modules: core, dao and web. The first one contains core components such as configuration, 
 controllers, handlers or plugins. The second module contains the data managers and data access objects of the application domain 
 and the last module is the web graphical interface and the files to set up the application.
 
-Easit4all uses Java Spring Framework (MVC, Security, JPA and Social), Maven and MySQL database
+Easit4all uses Java Spring Framework (MVC, Security, JPA and Social), HTML5, JQuery, CSS3 and MySQL database.
 
 License
 -------
