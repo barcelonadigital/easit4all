@@ -32,24 +32,25 @@ BSD license. Please, send any feedback to easit4all@gmail.com
 Installation
 ------------
 
-A MySQL schema database should be created.
+Basically, we use maven to compile and launch the website. 
+(Maven 2.0 must be installed and configured in the local machine)
+
+1.- Add jar files included in lib folder into your local maven repository
+
+2.- Create the MySQL schema database
 - Use mysql dump file which is found at easit4all/dao/src/db
 - Create a mysql user and add privileges to this schema
 
-Modify properties file accordingly.
+3.- Modify properties file accordingly.
 - Change database properties
 - Change mailing properties
 - Change Social providers key words
 
+4.- Clean and compile the sources
+- mvn clean install
 
 Quick Start & Examples
 ----------------------
-
-Basically, use maven to compile and launch the website. 
-Maven 2.0 must be installed and configured in the local machine. 
-
-To clean and compile the sources
-- mvn clean install
 
 To run the website under a tomcat server plugin
 - mvn tomcat:run
