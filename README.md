@@ -25,7 +25,7 @@ Easit4all uses Java Spring Framework (MVC, Security, JPA and Social), HTML5, JQu
 License
 -------
 
-This project has been developed by Barcelona Digital Health department. Easit4all is shared under New BSD license. 
+This project has been developed by Barcelona Digital eHealth department. Easit4all is shared under New BSD license. 
 This project folder includes a license file. You can share and distribute this project and built software using New 
 BSD license. Please, send any feedback to easit4all@gmail.com
 
