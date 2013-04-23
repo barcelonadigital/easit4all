@@ -1,5 +1,5 @@
-CREATE DATABASE  IF NOT EXISTS `asit-ps` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `asit-ps`;
+CREATE DATABASE  IF NOT EXISTS `asit` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `asit`;
 -- MySQL dump 10.13  Distrib 5.5.16, for Win32 (x86)
 --
 -- Host: localhost    Database: asit
