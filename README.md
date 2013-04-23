@@ -15,7 +15,7 @@ The official website is available at http://www.easit4all.com
 
 Technicalities
 --------------
-The Easit4All solution is a simple framework composed of 
+The Easit4All software solution is a simple java based framework composed of 
 three main modules: core, dao and web. The first one contains core components such as configuration, 
 controllers, handlers or plugins. The second module contains the data managers and data access objects of the application domain 
 and the last module is the web graphical interface and the files to set up the application.
@@ -27,7 +27,7 @@ License
 
 This project has been developed by Barcelona Digital Health department. Easit4all is shared under New BSD license. 
 This project folder includes a license file. You can share and distribute this project and built software using New 
-BSD license. Please, send any feedback to http://www.easit4all.com
+BSD license. Please, send any feedback to easit4all@gmail.com
 
 Installation
 ------------
@@ -45,9 +45,8 @@ Modify properties file accordingly.
 Quick Start & Examples
 ----------------------
 
-Basically we use maven to compile and launch the website. 
-At least Maven 2.0 must be installed and configured in the machine. 
-Also a jave IDE (e.g. eclipse) should be preferred to have it installed.
+Basically, use maven to compile and launch the website. 
+Maven 2.0 must be installed and configured in the local machine. 
 
 To clean and compile the sources
 - mvn clean install
@@ -66,7 +65,7 @@ The maven installation by default executes all tests created for the project
 Acknowledgements
 ----------------
 
-The idea of easit4all project was originally created for the European Project cloud4all (FP7-289016) by the Active Independent Living Group 
+The idea of easit4all project was originally created for the European Project Cloud4All (FP7-289016) by the Active Independent Living Group 
 within the eHealth Research Department of Barcelona Digital.
 
 Authors
