@@ -51,15 +51,17 @@ public class ApplicationPreferencesController {
 
 	    // Update preferences (in server or in database)
 	    // userId for database preferences, userName for server preferences
-	    preferencesData.insertOrUpdatePreferences(prefs, (EasitAccount) request.getSession().getAttribute("user"));
+	    preferencesData.insertOrUpdatePreferences(prefs, (EasitAccount) request.getSession().getAttribute("user"), request.getRemoteAddr());
 
 	    // Store preferences into session
 	    request.getSession().setAttribute("preferences", prefs);
+	    request.getSession().setAttribute("preferences.error", false);
+	    request.getSession().setAttribute("preferences.error.message", "");	    
 
 	} catch (Exception e) {
-	    // TODO Auto-generated catch block
+	    request.getSession().setAttribute("preferences.error", true);
+	    request.getSession().setAttribute("preferences.error.message", e.getMessage());	    
 	    logger.error(e.getMessage());
-	    // e.printStackTrace();
 	}
 	return "applicationPreferences";
     }

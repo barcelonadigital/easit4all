@@ -20,12 +20,12 @@ public class DataBasePreferencesManager implements PreferencesDataManager {
      * Insert (in case no preferences created) or Update existing preferences
      */
     @Override
-    public void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user) {
+    public void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user, String clientIpAddr) {
 	preferencesRepository.updatePreferences(preferences, user.getId());
     }
 
     @Override
-    public EasitApplicationPreferences loadPreferences(EasitAccount user) throws Exception {
+    public EasitApplicationPreferences loadPreferences(EasitAccount user, String clientIpAddr) throws Exception {
 	return preferencesRepository.getPreferencesByUserId(user.getId());
     }
 }

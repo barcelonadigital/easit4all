@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,26 +48,25 @@ public class ServerPreferencesManager implements PreferencesDataManager {
     private static final String verdanaFont = "VERDANA";
     private static final String serifFace = "SERIF";
     private static final String sansserifFace = "SANS SERIF";
-    private static final double defaultLineSpacing = 1.5;
-    private static final boolean defaultLayout = false;
-    private static final boolean defaultLinks = false;
-    private static final boolean defaultInputsLarger = false;
-    private static final boolean defaultToc = false;
 
     private String psURL;
     private String psCommon;
+    private String appToken;
+    private String serverName;
 
-    public ServerPreferencesManager(String urlPreferenceServer, String urlCommon) {
-	psURL = urlPreferenceServer;
-	psCommon = urlCommon;
+    public ServerPreferencesManager(String serverName, String urlPreferenceServer, String urlCommon, String appToken) {
+	this.serverName = serverName;
+	this.psURL = urlPreferenceServer;
+	this.psCommon = urlCommon;
+	this.appToken = appToken;
     }
 
     @Override
-    public EasitApplicationPreferences loadPreferences(EasitAccount user) throws Exception {
+    public EasitApplicationPreferences loadPreferences(EasitAccount user, String clientIpAddr) throws Exception {
 	EasitApplicationPreferences appPreferences = null;
 	try {    
 	    // Get preferences from server
-	    String strPrefs = getPreferencesFromServer(user);
+	    String strPrefs = getPreferencesFromServer(user, clientIpAddr);
 	    PreferencesC4A prefsC4A = null;
 	    
 	    //Try to insert them
@@ -80,13 +81,13 @@ public class ServerPreferencesManager implements PreferencesDataManager {
     }
 
     @Override
-    public void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user) throws Exception {
+    public void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user, String clientIpAddr) throws Exception {
 	try {
 	    PreferencesC4A prefsC4A = null;
 	    String strPrefs = "";
 
 	    // Get preferences from server
-	    strPrefs = getPreferencesFromServer(user);
+	    strPrefs = getPreferencesFromServer(user, clientIpAddr);
 	    
 	    //Try to insert them
 	    if (!strPrefs.isEmpty() && strPrefs.toLowerCase().indexOf("error") == -1) {
@@ -103,6 +104,51 @@ public class ServerPreferencesManager implements PreferencesDataManager {
 	} catch (Exception e) {
 	    throw new Easit4allException(e.getMessage());
 	}
+    }
+
+    private String getPreferencesFromServer(EasitAccount user, String clientIpAddr) throws Exception {
+	String strPrefs = "";
+	String res = "";
+	HttpURLConnection conn = null;	
+	try 
+	{
+            // Prepare request       	        	
+            URL url = new URL(psURL
+                .replace("<userToken>", user.getUsername())
+                .replace("<appToken>", appToken)
+                .replace("<localIp>", clientIpAddr)
+            );
+            logger.info("Call to url address :" + url.toString());
+            	
+            // Create connection
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json");
+            
+            if (conn.getResponseCode() == 202)    	
+        	throw new Exception("User is not Authorised. ");
+            else 
+        	if(conn.getResponseCode() != 200)
+        	    throw new Exception("Connection is not stablished.");
+            
+            // Get preferences
+            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+            while ((res = br.readLine()) != null) {
+        	strPrefs += res;
+            }
+            logger.info("Preferences loaded: " + strPrefs);
+            conn.disconnect();
+	} 
+	catch(Exception e) {
+	    StringBuilder errorMsg = new StringBuilder().append("Unable to load user preferences from " + serverName.toUpperCase() + " server: ");
+	    if (conn != null)
+                conn.disconnect();
+	    
+	    errorMsg.append(e.getMessage() + "<p> Loading local default preferences.</p>");
+	    throw new Exception(errorMsg.toString());
+	}
+	
+	return strPrefs;
     }
 
     private void sendToServer(EasitAccount user, String strPrefs) throws UnsupportedEncodingException, IOException, ClientProtocolException {
@@ -122,30 +168,6 @@ public class ServerPreferencesManager implements PreferencesDataManager {
 	//Clear connection
 	httpClient.getConnectionManager().shutdown();
     }
-
-    private String getPreferencesFromServer(EasitAccount user) throws Exception {
-	String strPrefs = "";
-	String res = "";
-	
-	// Prepare request
-	URL url = new URL(psURL + user.getUsername());
-	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	conn.setRequestMethod("GET");
-	conn.setRequestProperty("Accept", "application/json");
-	if (conn.getResponseCode() != 200) {
-	    throw new Exception("Failed : HTTP error code : " + conn.getResponseCode());
-	}
-
-	// Get preferences
-	BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-	while ((res = br.readLine()) != null) {
-	    strPrefs += res;
-	}
-	logger.info("Preferences loaded: " + strPrefs);
-	conn.disconnect();
-	return strPrefs;
-    }
-
     private PreferencesC4A parseToObjectPreferences(String strPrefs) throws JsonParseException, JsonMappingException, IOException {
 	// Map json to Object preferences
 	ObjectMapper mapper = new ObjectMapper().setVisibility(JsonMethod.CREATOR, Visibility.NONE);

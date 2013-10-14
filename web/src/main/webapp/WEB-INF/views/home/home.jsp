@@ -10,12 +10,19 @@
 	});
 </script>
 
-
 <div id="home">
+<div class="formInfo">
+		  		<c:if test="${sessionScope['preferences.error']}">
+			  		<div class="error">
+			  			${sessionScope['preferences.error.message']}
+			  		</div>
+		 	 	</c:if>
+			</div>
+
 	<br/><br/>
 
 	 <div class="dimmed" style="text-align:justify">
-						<p>Please, select any of the menu option list or choose one of the recommended actions listed below. </p>
+						<p>Please, select any of the recommended actions listed below. </p>
 	</div>
 	
 	<tiles:insertTemplate template="../plugins/news.jsp"/>

@@ -15,15 +15,16 @@
  */
 package org.easit.core.configurations;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
-
+import java.util.HashMap;
 import javax.sql.DataSource;
 
 import org.easit.core.plugins.PluginManager;
 import org.easit.core.plugins.PluginManagerFactory;
 import org.easit.core.preferences.PreferencesDataManager;
-import org.easit.core.preferences.PreferencesDataManagerFactory;
+import org.easit.core.preferences.impl.DataBasePreferencesManager;
+import org.easit.core.preferences.impl.ServerPreferencesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,11 +46,22 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class MainConfig {
 
     @Autowired
-    Environment environment;
+    private Environment environment;
 
     @Autowired
-    DataSource dataSource;
+    private DataSource dataSource;
 
+    private static HashMap<String, Class> registeredDataSources = new HashMap<String, Class>();
+
+    static {
+	registerSource("server", ServerPreferencesManager.class);
+	registerSource("database", DataBasePreferencesManager.class);
+    }
+
+    public static void registerSource(String sourceId, Class prefsData) {
+	registeredDataSources.put(sourceId, prefsData);
+    }
+    
     @Bean
     public PlatformTransactionManager transactionManager() {
 	return new DataSourceTransactionManager(dataSource);
@@ -60,20 +72,34 @@ public class MainConfig {
 	return new JdbcTemplate(dataSource);
     }
 
-    /**
-     * 	Load properties from environment
-     * @return
-     */
     @Bean
     public PreferencesDataManager preferenceManager() throws InstantiationException, IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException,
 	    InvocationTargetException {
-	Properties props = new Properties();
-	if (environment.getProperty("preferenceSource.name").equals("server")) {
-	    props.put("url", environment.getProperty("preferenceServer.url").toString());
-	}
-	props.put("common", environment.getProperty("preferenceServer.common").toString());
-
-	return PreferencesDataManagerFactory.createPreferenceManager(environment.getProperty("preferenceSource.name").toString(), props);
+	
+	String sourceId = environment.getProperty("preferenceSource.name").toString();
+	
+	if (sourceId == null || sourceId.isEmpty() || registeredDataSources.get(sourceId) == null)
+	    return null;
+	else 
+	{		
+	    if (registeredDataSources.get(sourceId).equals(ServerPreferencesManager.class)) 
+	    {
+		Constructor<ServerPreferencesManager> constructor =
+		ServerPreferencesManager.class.getConstructor(String.class, String.class, String.class, String.class);
+		return (ServerPreferencesManager) constructor.newInstance(
+			environment.getProperty("preferenceServer.name").toString(),
+			environment.getProperty("preferenceServer.url").toString(), 
+			environment.getProperty("preferenceServer.common").toString(),
+			environment.getProperty("preferenceServer.token").toString());
+	    } 
+	    else 
+	    { 
+		if (registeredDataSources.get(sourceId).equals(DataBasePreferencesManager.class))
+		    return DataBasePreferencesManager.class.newInstance();
+		else
+		    return null;
+	    }	    
+	}		
     }
 
     @Bean

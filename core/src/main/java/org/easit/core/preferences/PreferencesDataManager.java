@@ -8,7 +8,7 @@ import org.easit.dao.model.EasitApplicationPreferences;
  */
 public interface PreferencesDataManager {
 
-    void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user) throws Exception;
+    void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user, String clientIpAddr) throws Exception;
 
-    EasitApplicationPreferences loadPreferences(EasitAccount user) throws Exception;
+    EasitApplicationPreferences loadPreferences(EasitAccount user, String clientIpAddr) throws Exception;
 }

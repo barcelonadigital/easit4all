@@ -110,17 +110,22 @@ public class AfterLoginSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
 	try {
 	    // load preferences from Server or Database
-	    preferences = preferencesManager.loadPreferences(acc);
+	    preferences = preferencesManager.loadPreferences(acc, request.getRemoteAddr());
+	    request.getSession().setAttribute("preferences.error", false);
+	    request.getSession().setAttribute("preferences.error.message", "");
+	    
 	    logger.info("Loading user preferences from the  database/url server");
-
-	} catch (Exception e1) {
-	    // TODO Auto-generated catch block
+	} 
+	catch (Exception e) {
+	    request.getSession().setAttribute("preferences.error", true);
+	    request.getSession().setAttribute("preferences.error.message", e.getMessage());
+	    
 	    logger.error("Problem loading user preferences from the  database/url server");
 	}
 
 	// load preferences from file
 	if (preferences == null) {
-	    System.out.println("Loading default user preferences");
+	    logger.info("Loading default user preferences");
 	    preferences = loadPreferencesFromFile();
 	}
 
