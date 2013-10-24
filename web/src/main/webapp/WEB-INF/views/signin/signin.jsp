@@ -52,7 +52,7 @@
 				<div class="ym-fbox-button">
 					<button type="submit" title="Sign in" class="ym-button">Sign in</button>
 					<!-- class="ym-button ym-disabled" href="<c:url value="/signup"/>"  --> 
-					<a title="Sign up" class="ym-button ym-disabled" style="float: right;">Sign up</a>
+					<a title="Sign up" class="ym-button" style="float: right;" href="<c:url value="/signup"/>">Sign up</a>
 				</div>
 				</div>
 			</form>
