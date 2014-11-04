@@ -64,6 +64,7 @@ public class SocialConfig {
 
     @Inject
     AfterLoginSuccessHandler loginSuccess;
+    
 
     /**
      * Registering the ASIT connections provided to social networks. This
@@ -75,17 +76,17 @@ public class SocialConfig {
     @Bean
     @Scope(value = "singleton", proxyMode = ScopedProxyMode.INTERFACES)
     public ConnectionFactoryLocator connectionFactoryLocator() {
-	ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
-	registry.addConnectionFactory(new TwitterConnectionFactory(environment.getProperty("twitter.consumerKey"), environment.getProperty("twitter.consumerSecret")));
-	registry.addConnectionFactory(new FacebookConnectionFactory(environment.getProperty("facebook.clientId"), environment.getProperty("facebook.clientSecret")));
-
-	return registry;
+    	//Handles the back-end side of the authorization flow
+		ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
+		registry.addConnectionFactory(new TwitterConnectionFactory(environment.getProperty("twitter.consumerKey"), environment.getProperty("twitter.consumerSecret")));
+		registry.addConnectionFactory(new FacebookConnectionFactory(environment.getProperty("facebook.clientId"), environment.getProperty("facebook.clientSecret")));
+		return registry;
     }
 
     @Bean
     @Scope(value = "singleton", proxyMode = ScopedProxyMode.INTERFACES)
     public UsersConnectionRepository usersConnectionRepository() {
-	return new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator(), Encryptors.noOpText());
+    	return new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator(), Encryptors.noOpText());
     }
 
     @Bean
@@ -101,35 +102,39 @@ public class SocialConfig {
     @Bean
     @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
     public Facebook facebook() {
-	Connection<Facebook> facebook = connectionRepository().findPrimaryConnection(Facebook.class);
-	return facebook != null && !facebook.hasExpired() && facebook.getApi().isAuthorized() ? facebook.getApi() : new FacebookTemplate();
+    	Connection<Facebook> connection = connectionRepository().findPrimaryConnection(Facebook.class);
+		return connection != null ? connection.getApi() : new FacebookTemplate();
     }
 
     @Bean
     @Scope(value = "request", proxyMode = ScopedProxyMode.INTERFACES)
     public Twitter twitter() {
-	Connection<Twitter> twitter = connectionRepository().findPrimaryConnection(Twitter.class);
-	return twitter != null ? twitter.getApi() : new TwitterTemplate();
+    	Connection<Twitter> twitter = connectionRepository().findPrimaryConnection(Twitter.class);
+		return twitter != null ? twitter.getApi() : new TwitterTemplate();
     }
 
     @Bean
     public ConnectController connectController() {
-	ConnectController connectController = new ConnectController(connectionFactoryLocator(), connectionRepository());
-	connectController.addInterceptor(new FacebookAfterConnectInterceptor());
-	connectController.addInterceptor(new TwitterAfterConnectInterceptor());
-	connectController.setApplicationUrl(environment.getProperty("project.url"));
-	return connectController;
+		ConnectController connectController = new ConnectController(connectionFactoryLocator(), connectionRepository());
+		
+		//TODO: IS necessary?? - 
+		//Adds a ConnectInterceptor to receive callbacks during the connection process. Useful for programmatic configuration.
+		connectController.addInterceptor(new FacebookAfterConnectInterceptor());
+		connectController.addInterceptor(new TwitterAfterConnectInterceptor());
+		
+		connectController.setApplicationUrl(environment.getProperty("project.url"));
+		return connectController;
     }
 
     @Bean
     public SimpleSignInAdapter simpleSignInAdapter(RequestCache requestCache, AfterLoginSuccessHandler loginSuccess) {
-	SimpleSignInAdapter signIn = new SimpleSignInAdapter(requestCache, loginSuccess);
-	return signIn;
+		SimpleSignInAdapter signIn = new SimpleSignInAdapter(requestCache, loginSuccess);
+		return signIn;
     }
 
     @Bean
     public ProviderSignInController providerSignInController(RequestCache requestCache) {
-	ProviderSignInController controller = new ProviderSignInController(connectionFactoryLocator(), usersConnectionRepository(), new SimpleSignInAdapter(requestCache, loginSuccess));
-	return controller;
+		ProviderSignInController controller = new ProviderSignInController(connectionFactoryLocator(), usersConnectionRepository(), new SimpleSignInAdapter(requestCache, loginSuccess));
+		return controller;
     }
 }

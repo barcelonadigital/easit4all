@@ -81,11 +81,11 @@
 									</c:otherwise>
 								</c:choose>
 								<c:choose>
-									<c:when test="${pageSize + TWITTER_LIMIT_RESULT lt offset*TWITTER_LIMIT_RESULT}">
+									<c:when test="${offset * TWITTER_LIMIT_RESULT lt pageSize}">
 											- <c:out value="${offset*TWITTER_LIMIT_RESULT}"/> of <c:out value="${pageSize}"/>
 									</c:when>
 									<c:otherwise>
-											- <c:out value="${pageSize}"/> of <c:out value="${pageSize}"/>
+											- <c:out value="${pageSize}"/> of2 <c:out value="${pageSize}"/>
 									</c:otherwise>
 							</c:choose>
 							</c:when>
@@ -120,7 +120,7 @@
 								</c:otherwise>
 							</c:choose>
 							<c:choose>
-								<c:when test="${pageSize + TWITTER_LIMIT_RESULT lt offset*TWITTER_LIMIT_RESULT}">
+								<c:when test="${offset * TWITTER_LIMIT_RESULT le pageSize}">
 									<a class="ym-button pagination-next" href="<c:out value="${timelineBaseUrl}"/>/${timelineName}?offset=${offset + 1}" >&#9658;</a>
 								</c:when>
 								<c:otherwise>

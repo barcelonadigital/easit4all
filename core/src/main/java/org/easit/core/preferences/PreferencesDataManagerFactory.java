@@ -36,8 +36,8 @@ public class PreferencesDataManagerFactory {
 	else {
 	    if (registeredDataSources.get(sourceId).equals(ServerPreferencesManager.class)) {
 		Constructor<ServerPreferencesManager> constructor =
-		ServerPreferencesManager.class.getConstructor(String.class, String.class);
-		return (ServerPreferencesManager) constructor.newInstance(props.getProperty("url").toString(), props.getProperty("common").toString());
+		ServerPreferencesManager.class.getConstructor(String.class, String.class, String.class);
+		return (ServerPreferencesManager) constructor.newInstance(props.getProperty("url").toString(), props.getProperty("common").toString(), props.getProperty("reg").toString());
 	    } else {
 		if (registeredDataSources.get(sourceId).equals(DataBasePreferencesManager.class))
 		    return DataBasePreferencesManager.class.newInstance();

@@ -16,6 +16,7 @@
 package org.easit.core.controllers.twitter;
 
 import java.security.Principal;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,8 @@ import org.easit.dao.model.PSMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.social.MissingAuthorizationException;
+import org.springframework.social.twitter.api.DirectMessage;
+import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,64 +36,72 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class TwitterMessageController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TwitterMessageController.class);
+	private static final Logger logger = LoggerFactory.getLogger(TwitterMessageController.class);
 
-    private final Twitter twitter;
+	private final Twitter twitter;
 
-    @Inject
-    public TwitterMessageController(Twitter twitter) {
-	this.twitter = twitter;
-    }
-
-    @ExceptionHandler(MissingAuthorizationException.class)
-    public String handleAuthorizationException(Principal currentUser) {
-	return "redirect:/connect/twitter";
-    }
-
-    @RequestMapping(value = "/twitter/messages", method = RequestMethod.GET)
-    public String inbox(Model model, String offset) throws Exception {
-	int listSize = 0;
-	int int_offset = 0;
-	if (offset != null) {
-	    int_offset = Integer.valueOf(offset);
+	@Inject
+	public TwitterMessageController(Twitter twitter) {
+		this.twitter = twitter;
 	}
-	listSize = twitter.directMessageOperations().getDirectMessagesReceived().size();
-	model.addAttribute("directMessages", twitter.directMessageOperations().getDirectMessagesReceived(int_offset, PSMetadata.TWITTER_LIMIT_RESULT));
-	model.addAttribute("dmListType", "Received");
-	model.addAttribute("messageForm", new MessageForm());
-	model.addAttribute("offset", int_offset);
-	model.addAttribute("pageSize", listSize);
-	return "twitter/messages";
-    }
 
-    @RequestMapping(value = "/twitter/messages/sent", method = RequestMethod.GET)
-    public String sent(Model model, String offset) {
-	int listSize = 0;
-	int int_offset = 0;
-	if (offset != null) {
-	    int_offset = Integer.valueOf(offset);
+	@ExceptionHandler(MissingAuthorizationException.class)
+	public String handleAuthorizationException(Principal currentUser) {
+		return "redirect:/connect/twitter";
 	}
-	listSize = twitter.directMessageOperations().getDirectMessagesSent().size();
-	model.addAttribute("directMessages", twitter.directMessageOperations().getDirectMessagesSent(int_offset, PSMetadata.TWITTER_LIMIT_RESULT));
-	model.addAttribute("dmListType", "Sent");
-	model.addAttribute("messageForm", new MessageForm());
-	model.addAttribute("offset", int_offset);
-	model.addAttribute("pageSize", listSize);
-	return "twitter/messages";
-    }
 
-    // Send direct messages
-    @RequestMapping(value = "/twitter/messages", method = RequestMethod.POST)
-    public String sent(MessageForm message) {
-	logger.info("message to: " + message.getTo());
-	logger.info("text: " + message.getText());
-	try {
-	    twitter.directMessageOperations().sendDirectMessage(message.getTo(), message.getText());
-	} catch (Exception e) {
-	    logger.error(e.getMessage());
-	    // e.printStackTrace();
+	@RequestMapping(value = "/twitter/messages", method = RequestMethod.GET)
+	public String inbox(Model model, String offset) throws Exception {
+		int listSize = 0;
+		int int_offset = 0;
+		if (offset != null) {
+			int_offset = Integer.valueOf(offset);
+		}
+		
+		
+		int fromIndex = int_offset;
+		int toIndex = fromIndex + PSMetadata.TWITTER_LIMIT_RESULT;
+		
+		List<DirectMessage> messages = twitter.directMessageOperations().getDirectMessagesReceived();
+		toIndex = Math.min( toIndex, messages.size());
+		
+		listSize = messages.size();
+		model.addAttribute("directMessages", messages.subList(fromIndex, toIndex));
+		model.addAttribute("dmListType", "Received");
+		model.addAttribute("messageForm", new MessageForm());
+		model.addAttribute("offset", int_offset);
+		model.addAttribute("pageSize", listSize);
+		return "twitter/messages";
 	}
-	return "redirect:/twitter/messages";
-    }
+
+	@RequestMapping(value = "/twitter/messages/sent", method = RequestMethod.GET)
+	public String sent(Model model, String offset) {
+		int listSize = 0;
+		int int_offset = 0;
+		if (offset != null) {
+			int_offset = Integer.valueOf(offset);
+		}
+		listSize = twitter.directMessageOperations().getDirectMessagesSent().size();
+		model.addAttribute("directMessages", twitter.directMessageOperations().getDirectMessagesSent(int_offset, PSMetadata.TWITTER_LIMIT_RESULT));
+		model.addAttribute("dmListType", "Sent");
+		model.addAttribute("messageForm", new MessageForm());
+		model.addAttribute("offset", int_offset);
+		model.addAttribute("pageSize", listSize);
+		return "twitter/messages";
+	}
+
+	// Send direct messages
+	@RequestMapping(value = "/twitter/messages", method = RequestMethod.POST)
+	public String sent(MessageForm message) {
+		logger.info("message to: " + message.getTo());
+		logger.info("text: " + message.getText());
+		try {
+			twitter.directMessageOperations().sendDirectMessage(message.getTo(), message.getText());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return "redirect:/twitter/messages";
+	}
 
 }

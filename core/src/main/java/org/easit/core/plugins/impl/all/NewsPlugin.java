@@ -16,7 +16,7 @@ import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.facebook.api.Event;
 import org.springframework.social.facebook.api.Facebook;
-import org.springframework.social.facebook.api.FriendRequest;
+//import org.springframework.social.facebook.api.FriendRequest;
 import org.springframework.social.facebook.api.Invitation;
 import org.springframework.social.facebook.api.Post;
 import org.springframework.social.facebook.api.Post.PostType;
@@ -111,31 +111,31 @@ public class NewsPlugin implements Plugin {
 			    statusPosts.add(p.getId());
 		    }
 		}
-
+//TODO: HACK
 		// friendship requests
-		List<FriendRequest> frList = facebook.getApi().notificationOperations().getFriendRequests();
-		List<String> requests = new ArrayList<String>();
-		for (FriendRequest fr : frList) {
-		    if (lastDateNots == null || fr.getCreatedTime().after(lastDateNots)) {
-			requests.add(fr.getFrom().getId());
-		    }
-		}
-
-		// event updates
-		List<Invitation> eventList = facebook.getApi().eventOperations().getInvitations();
-		List<String> events = new ArrayList<String>();
-		for (Invitation i : eventList) {
-		    Event e = facebook.getApi().eventOperations().getEvent(i.getId());
-		    if (lastDateEvents == null || e.getUpdatedTime().after(lastDateEvents)) {
-			events.add(i.getId());
-		    }
-		}
+//		List<FriendRequest> frList = facebook.getApi().notificationOperations().getFriendRequests();
+//		List<String> requests = new ArrayList<String>();
+//		for (FriendRequest fr : frList) {
+//		    if (lastDateNots == null || fr.getCreatedTime().after(lastDateNots)) {
+//			requests.add(fr.getFrom().getId());
+//		    }
+//		}
+//
+//		// event updates
+//		List<Invitation> eventList = facebook.getApi().eventOperations().getInvitations();
+//		List<String> events = new ArrayList<String>();
+//		for (Invitation i : eventList) {
+//		    Event e = facebook.getApi().eventOperations().getEvent(i.getId());
+//		    if (lastDateEvents == null || e.getUpdatedTime().after(lastDateEvents)) {
+//			events.add(i.getId());
+//		    }
+//		}
 
 		map.put("fb_videos", videoPosts.size());
 		map.put("fb_photos", photoPosts.size());
 		map.put("fb_status", statusPosts.size());
-		map.put("fb_nots", requests.size());
-		map.put("fb_events", events.size());
+//		map.put("fb_nots", requests.size());
+//		map.put("fb_events", events.size());
 	    }
 	    break;
 

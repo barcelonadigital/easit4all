@@ -41,8 +41,8 @@ public class SimpleSignInAdapter implements SignInAdapter {
 
     @Inject
     public SimpleSignInAdapter(RequestCache requestCache, AfterLoginSuccessHandler loginSuccess) {
-	this.requestCache = requestCache;
-	this.loginSuccess = loginSuccess;
+		this.requestCache = requestCache;
+		this.loginSuccess = loginSuccess;
     }
 
     public String signIn(String localUserId, NativeWebRequest request) {

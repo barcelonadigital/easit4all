@@ -40,47 +40,48 @@ public class TwitterTrendsController {
 
     @Inject
     public TwitterTrendsController(Twitter twitter) {
-	this.twitter = twitter;
+    	this.twitter = twitter;
     }
 
     @ExceptionHandler(MissingAuthorizationException.class)
     public String handleAuthorizationException(Principal currentUser) {
-	return "redirect:/connect/twitter";
+    	return "redirect:/connect/twitter";
     }
 
     @ExceptionHandler(ServerOverloadedException.class)
     public String handleServerOverloadedException(Principal currentUser) {
-	return "twitter/serverOverloaded";
+    	return "twitter/serverOverloaded";
     }
 
     @RequestMapping(value = "/twitter/dailyTrends", method = RequestMethod.GET)
     public String showTrends(Model model, String offset) {
-	if (connectionRepository.findPrimaryConnection(Twitter.class) == null) {
-	    return "redirect:/connect/twitter";
-	}
-	int resultLimit = 0;
-	int resultOffset = 0;
-	int listSize = 0;
-
-	int int_offset = 0;
-	if (offset != null) {
-	    int_offset = Integer.valueOf(offset);
-	}
-	listSize = twitter.searchOperations().getDailyTrends().size();
-	if (listSize <= int_offset + PSMetadata.TWITTER_LIMIT_RESULT) {
-	    resultLimit = listSize;
-	} else {
-	    resultLimit = int_offset + PSMetadata.TWITTER_LIMIT_RESULT;
-	}
-	if (listSize <= int_offset) {
-	    resultOffset = listSize;
-	} else {
-	    resultOffset = int_offset;
-	}
-
-	model.addAttribute("trends", twitter.searchOperations().getDailyTrends().subList(resultOffset, resultLimit).get(0));
-	model.addAttribute("offset", resultOffset);
-	model.addAttribute("pageSize", listSize);
+    	//TODO : HACK
+//	if (connectionRepository.findPrimaryConnection(Twitter.class) == null) {
+//	    return "redirect:/connect/twitter";
+//	}
+//	int resultLimit = 0;
+//	int resultOffset = 0;
+//	int listSize = 0;
+//
+//	int int_offset = 0;
+//	if (offset != null) {
+//	    int_offset = Integer.valueOf(offset);
+//	}
+//	listSize = twitter.searchOperations().getDailyTrends().size();
+//	if (listSize <= int_offset + PSMetadata.TWITTER_LIMIT_RESULT) {
+//	    resultLimit = listSize;
+//	} else {
+//	    resultLimit = int_offset + PSMetadata.TWITTER_LIMIT_RESULT;
+//	}
+//	if (listSize <= int_offset) {
+//	    resultOffset = listSize;
+//	} else {
+//	    resultOffset = int_offset;
+//	}
+//
+//	model.addAttribute("trends", twitter.searchOperations().getDailyTrends().subList(resultOffset, resultLimit).get(0));
+//	model.addAttribute("offset", resultOffset);
+//	model.addAttribute("pageSize", listSize);
 	return "twitter/dailyTrends";
     }
 

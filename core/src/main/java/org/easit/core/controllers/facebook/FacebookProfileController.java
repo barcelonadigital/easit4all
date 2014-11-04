@@ -51,37 +51,36 @@ public class FacebookProfileController {
 
     @ExceptionHandler(MissingAuthorizationException.class)
     public String handleAuthorizationException(Principal currentUser) {
-	return "redirect:/connect/facebook";
+    	return "redirect:/connect/facebook";
     }
 
     @RequestMapping(value = "/facebook", method = RequestMethod.GET)
     public String home(Model model, Principal user) {
-	Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook.class);
-	if (connection == null) {
-	    return "redirect:/connect/facebook";
-	}
-	if (connection.hasExpired() || !connection.test()) {
-	    connectionRepository.removeConnection(connection.getKey());
-	    return "redirect:/connect/facebook";
-	}
-	model.addAttribute("profile", connection.getApi().userOperations().getUserProfile());
-	return "redirect:/facebook/feed";
+		Connection<Facebook> connection = connectionRepository.findPrimaryConnection(Facebook.class);
+		if (connection == null) {
+		    return "redirect:/connect/facebook";
+		}
+		if (connection.hasExpired() || !connection.test()) {
+		    connectionRepository.removeConnection(connection.getKey());
+		    return "redirect:/connect/facebook";
+		}
+		model.addAttribute("profile", connection.getApi().userOperations().getUserProfile());
+		return "facebook/profile";
     }
 
     @RequestMapping(value = "/facebook/profile", method = RequestMethod.GET)
-    public String profile(Model model) {
-	model.addAttribute("profile", facebook.userOperations().getUserProfile());
-	return "facebook/profile";
+	    public String profile(Model model) {
+		model.addAttribute("profile", facebook.userOperations().getUserProfile());
+		return "facebook/profile";
     }
 
     @RequestMapping(value = "/disconnect/facebook", method = RequestMethod.DELETE)
     public RedirectView removeConnection(NativeWebRequest request) {
-	RedirectView redirect = connectController.removeConnection("facebook", connectionRepository.findPrimaryConnection(Facebook.class).getKey().getProviderUserId(), request);
-
-	request.setAttribute("connectedToFacebook", connectionRepository.findConnections("facebook").size() > 0, WebRequest.SCOPE_SESSION);
-	request.setAttribute("connectedToAny", connectionRepository.findAllConnections().size() > 0, WebRequest.SCOPE_SESSION);
-
-	return redirect;
+		RedirectView redirect = connectController.removeConnection("facebook", connectionRepository.findPrimaryConnection(Facebook.class).getKey().getProviderUserId(), request);
+	
+		request.setAttribute("connectedToFacebook", connectionRepository.findConnections("facebook").size() > 0, WebRequest.SCOPE_SESSION);
+		request.setAttribute("connectedToAny", connectionRepository.findAllConnections().size() > 0, WebRequest.SCOPE_SESSION);
+		return redirect;
     }
 
 }

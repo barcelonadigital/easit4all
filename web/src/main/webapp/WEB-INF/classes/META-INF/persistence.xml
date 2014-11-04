@@ -10,10 +10,10 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>org.easit.dao.model.EasitAccount</class>
 		<class>org.easit.dao.model.UserConnection</class>
-		<class>org.easit.dao.model.DomainObject</class>
 		<class>org.easit.dao.model.EasitProfile</class>
 		<class>org.easit.dao.model.EasitApplicationPreferences</class>
 		<class>org.easit.dao.model.LogOperations</class>
+		<class>org.easit.dao.model.DomainObject</class>
 		<properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>         
             <property name="hibernate.show_sql" value="false"/>

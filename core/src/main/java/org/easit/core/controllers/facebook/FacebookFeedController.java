@@ -34,73 +34,84 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class FacebookFeedController {
 
-    private final Facebook facebook;
+	private final Facebook facebook;
 
-    @Inject
-    public FacebookFeedController(Facebook facebook) {
-	this.facebook = facebook;
+	@Inject
+	public FacebookFeedController(Facebook facebook) {
+		this.facebook = facebook;
 
-    }
-
-    @ExceptionHandler(MissingAuthorizationException.class)
-    public String handleAuthorizationException(Principal currentUser) {
-	return "redirect:/connect/facebook";
-    }
-
-    /*
-     * Show own wall
-     */
-    @RequestMapping(value = "/facebook/wall", method = RequestMethod.GET)
-    public String showWall(Model model, String offset, String size, String ro) {
-	int int_offset = 0;
-	int listSize = 0;
-
-	if (offset != null) {
-	    int_offset = Integer.valueOf(offset);
 	}
-	if (size != null) {
-	    listSize = Integer.valueOf(size);
-	} else {
-	    listSize = facebook.feedOperations().getFeed(0, PSMetadata.MAX_RESULTS_SEARCH).size();
-	}
-	model.addAttribute("userProf", facebook.userOperations().getUserProfile());
-	model.addAttribute("feed", facebook.feedOperations().getFeed(int_offset, PSMetadata.FACEBOOK_LIMIT_RESULT));
-	model.addAttribute("offset", int_offset);
-	model.addAttribute("pageSize", listSize);
-	return "facebook/wall";
-    }
 
-    /*
-     * Show feed
-     */
-    @RequestMapping(value = "/facebook/feed", method = RequestMethod.GET)
-    public String showFeed(Model model, String offset, String size, String ro, String feed) {
-	List<Post> postList = new ArrayList<Post>();
-	int int_offset = 0;
-	int listSize = 0;
-	int c = 0;
-	int c2 = 0;
-	if (offset != null) {
-	    int_offset = Integer.valueOf(offset);
+	@ExceptionHandler(MissingAuthorizationException.class)
+	public String handleAuthorizationException(Principal currentUser) {
+		return "redirect:/connect/facebook";
 	}
-	if (size != null) {
-	    listSize = Integer.valueOf(size);
-	} else {
-	    listSize = facebook.feedOperations().getHomeFeed(0, PSMetadata.MAX_RESULTS_SEARCH).size();
-	}
-	model.addAttribute("userProf", facebook.userOperations().getUserProfile());
-	model.addAttribute("feed", facebook.feedOperations().getHomeFeed(int_offset, PSMetadata.FACEBOOK_LIMIT_RESULT));
-	model.addAttribute("offset", int_offset);
-	model.addAttribute("pageSize", listSize);
-	return "facebook/feed";
-    }
 
-    /*
-     * Update the user status from 'feed'
-     */
-    @RequestMapping(value = "/facebook/feed", method = RequestMethod.POST)
-    public String postUpdate(String message, String uri) {
-	facebook.feedOperations().updateStatus(message);
-	return "redirect:/" + uri;
-    }
+	/*
+	 * Show own wall
+	 */
+	@RequestMapping(value = "/facebook/wall", method = RequestMethod.GET)
+	public String showWall(Model model, String offset, String size, String ro) {
+		int int_offset = 0;
+		int listSize = 0;
+
+		if (offset != null) {
+			int_offset = Integer.valueOf(offset);
+		}
+		
+		//Get the posts
+		int fromIndex = int_offset;
+		int toIndex = fromIndex + PSMetadata.TWITTER_LIMIT_RESULT;
+		List<Post> posts = facebook.feedOperations().getFeed(0, PSMetadata.MAX_RESULTS_SEARCH);
+		toIndex = Math.min(toIndex, posts.size());
+		
+		//Get the nº of the posts
+		if (size != null) {
+			listSize = Integer.valueOf(size);
+		}
+		else{
+			listSize = posts.size();
+		}
+		
+		model.addAttribute("userProf", facebook.userOperations().getUserProfile());		
+		model.addAttribute("feed", posts.subList(fromIndex, toIndex));
+		model.addAttribute("offset", int_offset);
+		model.addAttribute("pageSize", listSize);
+		return "facebook/wall";
+	}
+
+	/*
+	 * Show feed
+	 */
+	@RequestMapping(value = "/facebook/feed", method = RequestMethod.GET)
+	public String showFeed(Model model, String offset, String size, String ro, String feed) {
+		List<Post> postList = new ArrayList<Post>();
+		int int_offset = 0;
+		int listSize = 0;
+		int c = 0;
+		int c2 = 0;
+		if (offset != null) {
+			int_offset = Integer.valueOf(offset);
+		}
+		if (size != null) {
+			listSize = Integer.valueOf(size);
+		} else {
+			listSize = facebook.feedOperations().getHomeFeed().size();
+		}
+		List<Post> posstList = facebook.feedOperations().getHomeFeed(int_offset, PSMetadata.FACEBOOK_LIMIT_RESULT);
+		model.addAttribute("userProf", facebook.userOperations().getUserProfile());
+		model.addAttribute("feed", facebook.feedOperations().getHomeFeed(int_offset, PSMetadata.FACEBOOK_LIMIT_RESULT));
+		model.addAttribute("offset", int_offset);
+		model.addAttribute("pageSize", listSize);
+		return "facebook/feed";
+	}
+
+	/*
+	 * Update the user status from 'feed'
+	 */
+	@RequestMapping(value = "/facebook/feed", method = RequestMethod.POST)
+	public String postUpdate(String message, String uri) {
+		facebook.feedOperations().updateStatus(message);
+		return "redirect:/" + uri;
+	}
 }

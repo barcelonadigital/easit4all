@@ -70,7 +70,7 @@
 				</div>
 			</c:if>
 			
-				<c:if test="${not empty post.comments}">
+<%-- 				<c:if test="${not empty post.comments}">
 				<ul class="commentImagedList">
 					 <c:forEach items="${post.comments}" var="comment">
 					 <li class="commentImagedItem">
@@ -133,7 +133,7 @@
 						 </li>
 				 	</c:forEach>
 				 </ul>
-				  </c:if>
+				  </c:if> --%>
 				 <div id="commentDiv${status.index}" style="display: none;">
 				 <ul class="commentImagedListUser"> 
 				 	<li class="commentImagedItem">
