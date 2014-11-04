@@ -72,5 +72,5 @@ within the eHealth Research Department of Barcelona Digital.
 Authors
 -------
 
-Xavier Rafael-Palou (main contact) and Cristina Palmero
+Xavier Rafael-Palou (main contact) and Marc Girones, Cristina Palmero
 
