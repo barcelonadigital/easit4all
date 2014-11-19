@@ -21,47 +21,47 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class ApplicationPreferencesController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplicationPreferencesController.class);
+	private static final Logger logger = LoggerFactory.getLogger(ApplicationPreferencesController.class);
 
-    @Inject
-    private PreferencesDataManager preferencesData;
+	@Inject
+	private PreferencesDataManager preferencesData;
 
-    @RequestMapping(value = "/user/applicationPreferences", method = RequestMethod.GET)
-    public String showPreferencesGet(Principal currentUser, Model model) {
-	return "applicationPreferences";
-    }
-
-    @RequestMapping(value = "/user/applicationPreferences", method = RequestMethod.POST)
-    public String showPreferencesPost(Principal currentUser, HttpServletRequest request, String content) {
-
-	String con = null;
-	EasitApplicationPreferences prefs = null;
-	ObjectMapper mapper = new ObjectMapper();
-	try {
-	    // fetch cookie values
-	    for (Cookie co : request.getCookies()) {
-		if (co.getName().equals("fluid-ui-settings")) {
-		    con = co.getValue();
-		    break;
-		}
-	    }
-
-	    // Convert JSON to Application preferences
-	    prefs = mapper.readValue(URLDecoder.decode(con, "UTF-8"), EasitApplicationPreferences.class);
-
-	    // Update preferences (in server or in database)
-	    // userId for database preferences, userName for server preferences
-	    preferencesData.insertOrUpdatePreferences(prefs, (EasitAccount) request.getSession().getAttribute("user"));
-
-	    // Store preferences into session
-	    request.getSession().setAttribute("preferences", prefs);
-
-	} catch (Exception e) {
-	    // TODO Auto-generated catch block
-	    logger.error(e.getMessage());
-	    // e.printStackTrace();
+	@RequestMapping(value = "/user/applicationPreferences", method = RequestMethod.GET)
+	public String showPreferencesGet(Principal currentUser, Model model) {
+		return "applicationPreferences";
 	}
-	return "applicationPreferences";
-    }
+
+	@RequestMapping(value = "/user/applicationPreferences", method = RequestMethod.POST)
+	public String showPreferencesPost(Principal currentUser, HttpServletRequest request, String content) {
+
+		String con = null;
+		EasitApplicationPreferences prefs = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			// fetch cookie values
+			for (Cookie co : request.getCookies()) {
+				if (co.getName().equals("fluid-ui-settings")) {
+					con = co.getValue();
+					break;
+				}
+			}
+
+			// Convert JSON to Application preferences
+			prefs = mapper.readValue(URLDecoder.decode(con, "UTF-8"), EasitApplicationPreferences.class);
+
+			// Update preferences (in server or in database)
+			// userId for database preferences, userName for server preferences
+			preferencesData.insertOrUpdatePreferences(prefs, (EasitAccount) request.getSession().getAttribute("user"));
+
+			// Store preferences into session
+			request.getSession().setAttribute("preferences", prefs);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
+			// e.printStackTrace();
+		}
+		return "applicationPreferences";
+	}
 
 }

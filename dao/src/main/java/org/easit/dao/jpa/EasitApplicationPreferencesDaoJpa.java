@@ -4,6 +4,7 @@ import javax.persistence.Query;
 
 import org.easit.dao.EasitApplicationPreferencesDao;
 import org.easit.dao.model.EasitApplicationPreferences;
+import org.easit.dao.model.EasitProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,14 @@ public class EasitApplicationPreferencesDaoJpa extends GenericDaoJpa<EasitApplic
     public void updatePreferences(EasitApplicationPreferences prefs, long userId) {
 	Query querySelect;
 	try {
+//		
+//		String queryString1 = "SELECT af FROM ApplicationPreferences af WHERE af.userId = :userId";
+//	    Query querySelect1 = entityManager.createQuery(queryString1);
+//	    querySelect1.setParameter("userId", userId);
+//	    EasitApplicationPreferences e1 =  (EasitApplicationPreferences) querySelect1.getSingleResult();
+	    
+		
+		
 	    querySelect = entityManager.createNativeQuery("INSERT INTO ApplicationPreferences "
 		    + "(userId, textFont, theme, textSize, lineSpacing, layout, toc, links, inputsLarger, invertImages, tracking, magnification) " + "VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12)"
 		    + " ON DUPLICATE KEY UPDATE textFont = ?2, theme = ?3, textSize = ?4, lineSpacing = ?5, layout = ?6, "
@@ -46,13 +55,16 @@ public class EasitApplicationPreferencesDaoJpa extends GenericDaoJpa<EasitApplic
     @Override
     public EasitApplicationPreferences getPreferencesByUserId(long userId) {
 	try {
-	    String queryString = "SELECT af FROM ApplicationPreferences af WHERE af.userId = :userId";
-	    Query querySelect = entityManager.createQuery(queryString);
+	    String queryString1 = "SELECT af FROM EasitApplicationPreferences af WHERE af.userId = :userId";
+//	    String queryString2 = "SELECT af FROM applicationpreferences af WHERE af.userId = :userId";
+//	    String queryString3 = "SELECT af FROM applicationPreferences af WHERE af.userId = :userId";
+//	    String queryString4 = "SELECT af FROM Applicationpreferences af WHERE af.userId = :userId";
+	    Query querySelect = entityManager.createQuery(queryString1);
 	    querySelect.setParameter("userId", userId);
 	    return (EasitApplicationPreferences) querySelect.getSingleResult();
 	} catch (Exception e) {
 	    logger.error(e.getMessage());
-	    // e.printStackTrace();
+	    e.printStackTrace();
 	    return null;
 	}
     }

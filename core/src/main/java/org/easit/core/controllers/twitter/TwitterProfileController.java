@@ -34,30 +34,29 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class TwitterProfileController {
 
-    @Inject
-    private ConnectController connectController;
+	@Inject
+	private ConnectController connectController;
 
-    @Inject
-    private ConnectionRepository connectionRepository;
+	@Inject
+	private ConnectionRepository connectionRepository;
 
-    @RequestMapping(value = "/twitter", method = RequestMethod.GET)
-    public String home(Principal currentUser, Model model) {
-	Connection<Twitter> connection = connectionRepository.findPrimaryConnection(Twitter.class);
-	if (connection == null) {
-	    return "redirect:/connect/twitter";
+	@RequestMapping(value = "/twitter", method = RequestMethod.GET)
+	public String home(Principal currentUser, Model model) {
+		Connection<Twitter> connection = connectionRepository.findPrimaryConnection(Twitter.class);
+		if (connection == null) {
+			return "redirect:/connect/twitter";
+		}
+
+		return "redirect:twitter/timeline";
 	}
 
-	return "redirect:twitter/timeline";
-    }
+	@RequestMapping(value = "/disconnect/twitter", method = RequestMethod.DELETE)
+	public RedirectView removeConnection(NativeWebRequest request) {
+		RedirectView redirect = connectController.removeConnection("twitter", connectionRepository.findPrimaryConnection(Twitter.class).getKey().getProviderUserId(), request);
 
-    @RequestMapping(value = "/disconnect/twitter", method = RequestMethod.DELETE)
-    public RedirectView removeConnection(NativeWebRequest request) {
-	RedirectView redirect = connectController.removeConnection("twitter", connectionRepository.findPrimaryConnection(Twitter.class).getKey().getProviderUserId(), request);
+		request.setAttribute("connectedToTwitter", connectionRepository.findConnections("twitter").size() > 0, WebRequest.SCOPE_SESSION);
+		request.setAttribute("connectedToAny", connectionRepository.findAllConnections().size() > 0, WebRequest.SCOPE_SESSION);
 
-	request.setAttribute("connectedToTwitter", connectionRepository.findConnections("twitter").size() > 0, WebRequest.SCOPE_SESSION);
-	request.setAttribute("connectedToAny", connectionRepository.findAllConnections().size() > 0, WebRequest.SCOPE_SESSION);
-
-	return redirect;
-    }
-
+		return redirect;
+	}
 }

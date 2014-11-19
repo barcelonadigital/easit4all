@@ -67,12 +67,12 @@
 							0
 						</c:when>
 						<c:otherwise>
-							<c:out value="${(offset)*TWITTER_LIMIT_RESULT+1}"/>
+							<c:out value="${(offset) + 1}"/>
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
 						<c:when test="${offset + TWITTER_LIMIT_RESULT le pageSize}">
-							- <c:out value="${(offset+1)*TWITTER_LIMIT_RESULT}"/> of <c:out value="${pageSize}"/>
+							- <c:out value="${offset + TWITTER_LIMIT_RESULT}"/> of <c:out value="${pageSize}"/>
 						</c:when>	
 						<c:otherwise>
 							- <c:out value="${pageSize}"/> of <c:out value="${pageSize}"/>

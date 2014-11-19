@@ -55,6 +55,7 @@
 			</div>
 		</div>
 	</div>
+
 	<ul class="imagedList">
 		<c:forEach items="${profiles}" var="profile" varStatus="status">
 			<li class="imagedItem">
@@ -98,5 +99,3 @@
 		</c:otherwise>
 	</c:choose>
 </c:if>
-	</c:forEach>
-	</ul> -->

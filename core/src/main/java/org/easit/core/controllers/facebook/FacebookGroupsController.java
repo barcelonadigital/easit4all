@@ -36,39 +36,40 @@ public class FacebookGroupsController {
 
     @RequestMapping(value = "facebook/groups", method = RequestMethod.GET)
     public String showGroups(Model model, String offset) {
-	int resultOffset = 0;
-	int resultLimit = 0;
-	int listSize = 0;
-	int int_offset = 0;
-	if (offset != null) {
-	    int_offset = Integer.valueOf(offset);
-	}
-	// List<Group> groups = facebook.fetchConnections("me", "groups",
-	// Group.class);
-	listSize = facebook.groupOperations().getGroups().size();
-
-	if (listSize <= int_offset + PSMetadata.FACEBOOK_LIMIT_RESULT) {
-	    resultLimit = listSize;
-	} else {
-	    resultLimit = int_offset + PSMetadata.FACEBOOK_LIMIT_RESULT;
-	}
-	if (listSize <= int_offset) {
-	    resultOffset = listSize;
-	} else {
-	    resultOffset = int_offset;
-	}
-
-	List<Group> groups = facebook.groupOperations().getGroups().subList(resultOffset, resultLimit);
-	List<String> ownersId = new ArrayList<String>();
-	for (Group g : groups) {
-	    ownersId.add(facebook.groupOperations().getGroup(g.getId()).getOwner().getId());
-	}
-	model.addAttribute("groups", groups);
-	model.addAttribute("offset", resultOffset);
-	model.addAttribute("pageSize", listSize);
-	model.addAttribute("userId", facebook.userOperations().getUserProfile().getId());
-	model.addAttribute("ownersList", ownersId);
-	return "facebook/groups";
+    	//TODO: HACK
+//		int resultOffset = 0;
+//		int resultLimit = 0;
+//		int listSize = 0;
+//		int int_offset = 0;
+//		if (offset != null) {
+//		    int_offset = Integer.valueOf(offset);
+//		}
+//		// List<Group> groups = facebook.fetchConnections("me", "groups",
+//		// Group.class);
+//		listSize = facebook.groupOperations().getGroups().size();
+//	
+//		if (listSize <= int_offset + PSMetadata.FACEBOOK_LIMIT_RESULT) {
+//		    resultLimit = listSize;
+//		} else {
+//		    resultLimit = int_offset + PSMetadata.FACEBOOK_LIMIT_RESULT;
+//		}
+//		if (listSize <= int_offset) {
+//		    resultOffset = listSize;
+//		} else {
+//		    resultOffset = int_offset;
+//		}
+//	
+//		List<Group> groups = facebook.groupOperations().getGroups().subList(resultOffset, resultLimit);
+//		List<String> ownersId = new ArrayList<String>();
+//		for (Group g : groups) {
+//		    ownersId.add(facebook.groupOperations().getGroup(g.getId()).getOwner().getId());
+//		}
+//		model.addAttribute("groups", groups);
+//		model.addAttribute("offset", resultOffset);
+//		model.addAttribute("pageSize", listSize);
+//		model.addAttribute("userId", facebook.userOperations().getUserProfile().getId());
+//		model.addAttribute("ownersList", ownersId);
+		return "facebook/groups";
     }
 
     /*

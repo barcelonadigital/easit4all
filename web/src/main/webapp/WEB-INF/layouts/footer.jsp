@@ -9,7 +9,7 @@
 				Assistive Independent Living Research Group <br />
 				Barcelona digital eHealth department <br />
 				Powered by <a href="<c:url value="http://wiki.fluidproject.org"/>">Fluid Project</a> | <a href="<c:url value="http://www.yaml.de/"/>">YAML</a></span> <br />
-				&copy <a href="<c:url value="http://easit4all.com"/>">easit4all</a>, 2013 version 1.2			
+				&copy <a href="<c:url value="http://easit4all.com"/>">easit4all</a>, 2013 version 2.0		
 					 </div>	
 				</div>
 		</div>

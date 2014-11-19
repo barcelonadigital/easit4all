@@ -16,6 +16,7 @@
 package org.easit.core.controllers.twitter;
 
 import java.security.Principal;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -26,6 +27,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.social.MissingAuthorizationException;
 import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,90 +40,110 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class TwitterTimelineController {
 
-    private final Twitter twitter;
+	private final Twitter twitter;
 
-    @Inject
-    private ConnectionRepository connectionRepository;
+	@Inject
+	private ConnectionRepository connectionRepository;
 
-    @Inject
-    public TwitterTimelineController(Twitter twitter) {
-	this.twitter = twitter;
-    }
-
-    @ExceptionHandler(MissingAuthorizationException.class)
-    public String handleAuthorizationException(Principal currentUser) {
-	return "redirect:/connect/twitter";
-    }
-
-    @RequestMapping(value = "/twitter/timeline", method = RequestMethod.GET)
-    public String showTimeline(Model model, String offset) {
-	if (offset == null) {
-	    offset = "1";
-	}
-	/*
-	 * Connection<Twitter> connection =
-	 * connectionRepository.findPrimaryConnection(Twitter.class); if
-	 * (connection == null) { return "redirect:/connect/twitter"; }
-	 */
-	model.addAttribute(new UploadItem());
-	return showTimeline("Home", model, offset);
-    }
-
-    @RequestMapping(value = "/twitter/timeline/{timelineType}", method = RequestMethod.GET)
-    public String showTimeline(@PathVariable("timelineType") String timelineType, Model model, String offset) {
-	int int_page = 1;
-	if (offset != null) {
-	    int_page = Integer.valueOf(offset);
-	}
-	if (timelineType.equals("Home")) {
-	    model.addAttribute("timeline", twitter.timelineOperations().getHomeTimeline(int_page, PSMetadata.TWITTER_LIMIT_RESULT));
-	    model.addAttribute("pageSize", twitter.timelineOperations().getHomeTimeline().size());
-	    /*
-	     * //Public timeline not available due to its removal from twitter
-	     * service. Fix sublists when becomes available again!! } else if
-	     * (timelineType.equals("Public")) { model.addAttribute("timeline",
-	     * twitter.timelineOperations() .getPublicTimeline());
-	     */
-
-	} else if (timelineType.equals("User")) {
-	    model.addAttribute("timeline", twitter.timelineOperations().getUserTimeline(int_page, PSMetadata.TWITTER_LIMIT_RESULT));
-	    model.addAttribute("pageSize", twitter.timelineOperations().getUserTimeline().size());
-	} else if (timelineType.equals("Mentions")) {
-	    model.addAttribute("timeline", twitter.timelineOperations().getMentions(int_page, PSMetadata.TWITTER_LIMIT_RESULT));
-	    model.addAttribute("pageSize", twitter.timelineOperations().getMentions().size());
-	} else if (timelineType.equals("Favorites")) {
-	    model.addAttribute("timeline", twitter.timelineOperations().getFavorites(int_page, PSMetadata.TWITTER_LIMIT_RESULT));
-	    model.addAttribute("pageSize", twitter.timelineOperations().getFavorites().size());
-	}
-	model.addAttribute("timelineName", timelineType);
-	model.addAttribute(new UploadItem());
-	model.addAttribute("offset", int_page);
-	return "twitter/timeline";
-    }
-
-    @RequestMapping(value = "/twitter/tweet", method = RequestMethod.POST)
-    public String postTweet(@Valid UploadItem uploadItem, BindingResult result) {
-
-	if (result.hasErrors()) {
-	    return null;
-	}
-	String message = uploadItem.getCaption();
-	Resource photo = null;
-	// StatusDetails details = null;
-	if (!uploadItem.getFileData().isEmpty()) {
-	    final String fileName = uploadItem.getFileData().getOriginalFilename();
-	    photo = new ByteArrayResource(uploadItem.getFileData().getBytes()) {
-		public String getFilename() throws IllegalStateException {
-		    return fileName;
-		};
-	    };
-	    twitter.timelineOperations().updateStatus(message, photo);
-	    return "redirect:/twitter";
-	} else {
-	    twitter.timelineOperations().updateStatus(message);
-	    return "redirect:/twitter";
+	@Inject
+	public TwitterTimelineController(Twitter twitter) {
+		this.twitter = twitter;
 	}
 
-    }
+	@ExceptionHandler(MissingAuthorizationException.class)
+	public String handleAuthorizationException(Principal currentUser) {
+		return "redirect:/connect/twitter";
+	}
 
+	@RequestMapping(value = "/twitter/timeline", method = RequestMethod.GET)
+	public String showTimeline(Model model, String offset) {
+		if (offset == null) {
+			offset = "1";
+		}
+		/*
+		 * Connection<Twitter> connection =
+		 * connectionRepository.findPrimaryConnection(Twitter.class); if
+		 * (connection == null) { return "redirect:/connect/twitter"; }
+		 */
+		model.addAttribute(new UploadItem());
+		return showTimeline("Home", model, offset);
+	}
+
+	@RequestMapping(value = "/twitter/timeline/{timelineType}", method = RequestMethod.GET)
+	public String showTimeline(@PathVariable("timelineType") String timelineType, Model model, String offset) {
+		int int_page = 1;
+		if (offset != null) {
+			int_page = Integer.valueOf(offset);
+		}
+		if (timelineType.equals("Home")) {
+			int fromIndex = (int_page - 1) * PSMetadata.TWITTER_LIMIT_RESULT;
+			int toIndex = fromIndex + PSMetadata.TWITTER_LIMIT_RESULT;
+			
+			List<Tweet> tweets = twitter.timelineOperations().getHomeTimeline(200);
+			toIndex = Math.min( toIndex, tweets.size());
+			
+			model.addAttribute("timeline", tweets.subList(fromIndex, toIndex));
+			model.addAttribute("pageSize", twitter.timelineOperations().getHomeTimeline().size());
+
+		} else if (timelineType.equals("User")) {
+			int fromIndex = (int_page - 1) * PSMetadata.TWITTER_LIMIT_RESULT;
+			int toIndex = fromIndex + PSMetadata.TWITTER_LIMIT_RESULT;
+			
+			List<Tweet> tweets = twitter.timelineOperations().getUserTimeline(200);
+			toIndex = Math.min( toIndex, tweets.size());
+				
+			model.addAttribute("timeline", tweets.subList(fromIndex, toIndex));
+			model.addAttribute("pageSize", twitter.timelineOperations().getHomeTimeline().size());
+		
+		} else if (timelineType.equals("Mentions")) {
+			int fromIndex = (int_page - 1) * PSMetadata.TWITTER_LIMIT_RESULT;
+			int toIndex = fromIndex + PSMetadata.TWITTER_LIMIT_RESULT;
+			
+			List<Tweet> mentions = twitter.timelineOperations().getMentions(200);
+			toIndex = Math.min( toIndex, mentions.size());
+			
+			model.addAttribute("timeline", mentions.subList(fromIndex, toIndex));
+			model.addAttribute("pageSize", twitter.timelineOperations().getHomeTimeline().size());
+			
+		} else if (timelineType.equals("Favorites")) {
+			int fromIndex = (int_page - 1) * PSMetadata.TWITTER_LIMIT_RESULT;
+			int toIndex = fromIndex + PSMetadata.TWITTER_LIMIT_RESULT;
+			
+			List<Tweet> favorits = twitter.timelineOperations().getFavorites(200);
+			toIndex = Math.min( toIndex, favorits.size());
+			
+			model.addAttribute("timeline", favorits.subList(fromIndex, toIndex));
+			model.addAttribute("pageSize", twitter.timelineOperations().getHomeTimeline().size());
+		}
+		model.addAttribute("timelineName", timelineType);
+		model.addAttribute(new UploadItem());
+		model.addAttribute("offset", int_page);
+		return "twitter/timeline";
+	}
+
+	@RequestMapping(value = "/twitter/tweet", method = RequestMethod.POST)
+	public String postTweet(@Valid UploadItem uploadItem, BindingResult result) {
+
+		if (result.hasErrors()) {
+			return null;
+		}
+
+		String message = uploadItem.getCaption();
+		Resource photo = null;
+		// StatusDetails details = null;
+		if (!uploadItem.getFileData().isEmpty()) {
+			final String fileName = uploadItem.getFileData().getOriginalFilename();
+			photo = new ByteArrayResource(uploadItem.getFileData().getBytes()) {
+				public String getFilename() throws IllegalStateException {
+					return fileName;
+				};
+			};
+			twitter.timelineOperations().updateStatus(message, photo);
+			return "redirect:/twitter";
+		} else {
+			twitter.timelineOperations().updateStatus(message);
+			return "redirect:/twitter";
+		}
+
+	}
 }
