@@ -17,13 +17,13 @@ public class EasitAccountDaoJpa extends GenericDaoJpa<EasitAccount> implements E
     private static final Logger logger = LoggerFactory.getLogger(EasitAccountDaoJpa.class);
 
     public void createAccount(EasitAccount user, PasswordEncoder passwordEncoder) throws UsernameAlreadyInUseException {
-	try {
-	    user.setPassword(passwordEncoder.encode(user.getPassword()));
-	    save(user);
-
-	} catch (Exception e) {
-	    throw new UsernameAlreadyInUseException(user.getUsername());
-	}
+		try {
+		    user.setPassword(passwordEncoder.encode(user.getPassword()));
+		    save(user);
+	
+		} catch (Exception e) {
+		    throw new UsernameAlreadyInUseException(user.getUsername());
+		}
     }
 
     public List<EasitAccount> getAccounts() {

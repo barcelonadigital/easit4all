@@ -13,8 +13,15 @@
 		<logout delete-cookies="JSESSIONID,fluid-ui-settings" invalidate-session="true" />
 		<intercept-url pattern="/favicon.ico" access="permitAll" />
 		<intercept-url pattern="/resources/**" access="permitAll" />
+		
+		<!--Depercated sign in and sign up method-->
 		<intercept-url pattern="/signin/**" access="permitAll" />
 		<intercept-url pattern="/signup/**" access="permitAll"/>
+		
+		<!--New sign in and sign up method based on OAuth-->
+		<intercept-url pattern="/oauth_signin/**" access="permitAll"/>
+		<intercept-url pattern="/oauth_signup/**" access="permitAll"/>
+		
 		<intercept-url pattern="/services/**" access="permitAll" />
 		<intercept-url pattern="/contact/**" access="permitAll" />
 		<intercept-url pattern="/about/**" access="permitAll" />

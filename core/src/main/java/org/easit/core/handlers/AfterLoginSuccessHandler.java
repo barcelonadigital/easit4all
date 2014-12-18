@@ -29,153 +29,153 @@ import org.springframework.social.facebook.api.Facebook;
 
 public class AfterLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(AfterLoginSuccessHandler.class);
-    
-    @Inject
-    private ConnectionRepository connectionRepository;
+	private static final Logger logger = LoggerFactory.getLogger(AfterLoginSuccessHandler.class);
 
-    @Inject
-    private EasitAccountDao accountRepository;
+	@Inject
+	private ConnectionRepository connectionRepository;
 
-    @Inject
-    private Environment environment;
+	@Inject
+	private EasitAccountDao accountRepository;
 
-    @Inject
-    private PreferencesDataManager preferencesManager;
+	@Inject
+	private Environment environment;
 
-    @Inject
-    private PluginManager pluginManager;
+	@Inject
+	private PreferencesDataManager preferencesManager;
 
-    @Inject
-    private EasitProfileDao profileRepository;
+	@Inject
+	private PluginManager pluginManager;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-	setAttributesInSession(request, authentication);
-	deletePreferencesCookie(response);
-	super.onAuthenticationSuccess(request, response, authentication);
-    }
+	@Inject
+	private EasitProfileDao profileRepository;
 
-    public void setAttributesInSession(HttpServletRequest request, Authentication authentication) throws IOException, ServletException {
-	if (authentication != null) {
-
-	    // Set connection attributes
-	    setSocialConnectionAttributesInSession(request);
-
-	    // Set url names attributes
-	    setWebNamesAttributesInSession(request);
-
-	    // Set user attribute
-	    EasitAccount acc = accountRepository.findAccountByUsername(authentication.getName());
-	    request.getSession().setAttribute("user", acc);
-
-	    // Set profile preferences attributes in session
-	    setProfileAttributesInSession(request, acc);
-
-	    // Application Preferences
-	    setPreferencesAttributesInSession(request, acc);
-
-	    // Plugins
-	    loadPlugins();
-	}
-    }
-
-    /**
-     * Set technology skills if exists
-     * 
-     * @param request
-     * @param acc
-     */
-    private void setProfileAttributesInSession(HttpServletRequest request, EasitAccount acc) {
-	try {
-	    request.getSession().setAttribute("techSkills", profileRepository.getProfileByUserId(acc.getId()).getTechnologySkills());
-	} catch (Exception e) {
-	    request.getSession().setAttribute("techSkills", "-");
-	}
-    }
-
-    private void loadPlugins() {
-	// load required plugins (set as 'true' in application.properties file)
-	for (Plugin plugin : pluginManager.listPlugins()) {
-	    if (plugin.view()) {
-		plugin.load();
-	    }
-	}
-    }
-
-    private void setPreferencesAttributesInSession(HttpServletRequest request, EasitAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
-	// Load preferences and set them as session attributes
-	EasitApplicationPreferences preferences = null;
-	String json = null;
-
-	try {
-	    // load preferences from Server or Database
-	    preferences = preferencesManager.loadPreferences(acc);
-	    logger.info("Loading user preferences from the  database/url server");
-
-	} catch (Exception e1) {
-	    // TODO Auto-generated catch block
-	    logger.error("Problem loading user preferences from the  database/url server");
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+		setAttributesInSession(request, authentication);
+		deletePreferencesCookie(response);
+		super.onAuthenticationSuccess(request, response, authentication);
 	}
 
-	// load preferences from file
-	if (preferences == null) {
-	    System.out.println("Loading default user preferences");
-	    preferences = loadPreferencesFromFile();
+	public void setAttributesInSession(HttpServletRequest request, Authentication authentication) throws IOException, ServletException {
+		if (authentication != null) {
+
+			// Set connection attributes
+			setSocialConnectionAttributesInSession(request);
+
+			// Set url names attributes
+			setWebNamesAttributesInSession(request);
+
+			// Set user attribute
+			EasitAccount acc = accountRepository.findAccountByUsername(authentication.getName());
+			request.getSession().setAttribute("user", acc);
+
+			// Set profile preferences attributes in session
+			setProfileAttributesInSession(request, acc);
+
+			// Application Preferences
+			setPreferencesAttributesInSession(request, acc);
+
+			// Plugins
+			loadPlugins();
+		}
 	}
 
-	ObjectMapper mapper = new ObjectMapper();
-	json = mapper.writeValueAsString(preferences);
+	/**
+	 * Set technology skills if exists
+	 * 
+	 * @param request
+	 * @param acc
+	 */
+	private void setProfileAttributesInSession(HttpServletRequest request, EasitAccount acc) {
+		try {
+			request.getSession().setAttribute("techSkills", profileRepository.getProfileByUserId(acc.getId()).getTechnologySkills());
+		} catch (Exception e) {
+			request.getSession().setAttribute("techSkills", "-");
+		}
+	}
 
-	// sets application preferences in session for the default settings of the UIComponent
-	request.getSession().setAttribute("settings", json);
-    }
+	private void loadPlugins() {
+		// load required plugins (set as 'true' in application.properties file)
+		for (Plugin plugin : pluginManager.listPlugins()) {
+			if (plugin.view()) {
+				plugin.load();
+			}
+		}
+	}
 
-    private void setWebNamesAttributesInSession(HttpServletRequest request) {
-	// Set "/web_name/"
-	String web_name = environment.getProperty("project.webNameUri");
-	request.getSession().setAttribute("webNameUri", web_name);
+	private void setPreferencesAttributesInSession(HttpServletRequest request, EasitAccount acc) throws JsonGenerationException, JsonMappingException, IOException {
+		// Load preferences and set them as session attributes
+		EasitApplicationPreferences preferences = null;
+		String json = null;
 
-	// Set "web_name"
-	String simpleWebName = environment.getProperty("project.webName");
-	request.getSession().setAttribute("web_name", simpleWebName);
+		try {
+			// load preferences from Server or Database
+			preferences = preferencesManager.loadPreferences(acc);
+			logger.info("Loading user preferences from the  database/url server");
 
-	// Set "localhost:8080"
-	request.getSession().setAttribute("host", request.getHeader("host"));
-    }
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			logger.error("Problem loading user preferences from the  database/url server");
+		}
 
-    private void setSocialConnectionAttributesInSession(HttpServletRequest request) {
-	request.getSession().setAttribute("connectedToTwitter", connectionRepository.findConnections("twitter").size() > 0);
-	request.getSession().setAttribute(
-		"connectedToFacebook",
-		connectionRepository.findConnections("facebook").size() > 0 && !connectionRepository.findPrimaryConnection(Facebook.class).hasExpired()
-			&& connectionRepository.findPrimaryConnection(Facebook.class).getApi().isAuthorized());
+		// load preferences from file
+		if (preferences == null) {
+			System.out.println("Loading default user preferences");
+			preferences = loadPreferencesFromFile();
+		}
 
-	request.getSession().setAttribute("connectedToAny", connectionRepository.findAllConnections().size() > 0);
+		ObjectMapper mapper = new ObjectMapper();
+		json = mapper.writeValueAsString(preferences);
 
-	// Set session variables of the different services
-	request.getSession().setAttribute("FACEBOOK_LIMIT_RESULT", PSMetadata.FACEBOOK_LIMIT_RESULT);
-	request.getSession().setAttribute("TWITTER_LIMIT_RESULT", PSMetadata.TWITTER_LIMIT_RESULT);
-    }
+		// sets application preferences in session for the default settings of the UIComponent
+		request.getSession().setAttribute("settings", json);
+	}
 
-    // create new ApplicationPreferences object based on file properties
-    // (application.properties)
-    private EasitApplicationPreferences loadPreferencesFromFile() {
-	return new EasitApplicationPreferences(environment.getProperty("textFont"), environment.getProperty("theme"), Integer.parseInt(environment.getProperty("textSize")),
-		Integer.parseInt(environment.getProperty("lineSpacing")), Boolean.parseBoolean(environment.getProperty("layout")), Boolean.parseBoolean(environment.getProperty("toc")),
-		Boolean.parseBoolean(environment.getProperty("links")), Boolean.parseBoolean(environment.getProperty("inputsLarger")), Integer.parseInt(environment.getProperty("magnification")),
-		Boolean.parseBoolean(environment.getProperty("invertImages")), environment.getProperty("tracking"));
-    }
+	private void setWebNamesAttributesInSession(HttpServletRequest request) {
+		// Set "/web_name/"
+		String web_name = environment.getProperty("project.webNameUri");
+		request.getSession().setAttribute("webNameUri", web_name);
 
-    /**
-     * Delete cookie "fluid-uiComponet" even if it doesn't exists
-     * 
-     * @param response
-     */
-    private void deletePreferencesCookie(HttpServletResponse response) {
-	Cookie cookie = new Cookie("fluid-ui-settings", null); // Not necessary, but saves bandwidth.
-	cookie.setMaxAge(0); // Don't set to -1 or it will become a session cookie!
-	cookie.setPath("/");
-	response.addCookie(cookie);
-    }
+		// Set "web_name"
+		String simpleWebName = environment.getProperty("project.webName");
+		request.getSession().setAttribute("web_name", simpleWebName);
+
+		// Set "localhost:8080"
+		request.getSession().setAttribute("host", request.getHeader("host"));
+	}
+
+	private void setSocialConnectionAttributesInSession(HttpServletRequest request) {
+		request.getSession().setAttribute("connectedToTwitter", connectionRepository.findConnections("twitter").size() > 0);
+		request.getSession().setAttribute(
+				"connectedToFacebook",
+				connectionRepository.findConnections("facebook").size() > 0 && !connectionRepository.findPrimaryConnection(Facebook.class).hasExpired()
+				&& connectionRepository.findPrimaryConnection(Facebook.class).getApi().isAuthorized());
+
+		request.getSession().setAttribute("connectedToAny", connectionRepository.findAllConnections().size() > 0);
+
+		// Set session variables of the different services
+		request.getSession().setAttribute("FACEBOOK_LIMIT_RESULT", PSMetadata.FACEBOOK_LIMIT_RESULT);
+		request.getSession().setAttribute("TWITTER_LIMIT_RESULT", PSMetadata.TWITTER_LIMIT_RESULT);
+	}
+
+	// create new ApplicationPreferences object based on file properties
+	// (application.properties)
+	private EasitApplicationPreferences loadPreferencesFromFile() {
+		return new EasitApplicationPreferences(environment.getProperty("textFont"), environment.getProperty("theme"), Integer.parseInt(environment.getProperty("textSize")),
+				Integer.parseInt(environment.getProperty("lineSpacing")), Boolean.parseBoolean(environment.getProperty("layout")), Boolean.parseBoolean(environment.getProperty("toc")),
+				Boolean.parseBoolean(environment.getProperty("links")), Boolean.parseBoolean(environment.getProperty("inputsLarger")), Integer.parseInt(environment.getProperty("magnification")),
+				Boolean.parseBoolean(environment.getProperty("invertImages")), environment.getProperty("tracking"));
+	}
+
+	/**
+	 * Delete cookie "fluid-uiComponet" even if it doesn't exists
+	 * 
+	 * @param response
+	 */
+	private void deletePreferencesCookie(HttpServletResponse response) {
+		Cookie cookie = new Cookie("fluid-ui-settings", null); // Not necessary, but saves bandwidth.
+		cookie.setMaxAge(0); // Don't set to -1 or it will become a session cookie!
+		cookie.setPath("/");
+		response.addCookie(cookie);
+	}
 }

@@ -74,7 +74,7 @@ public class MainConfig {
 	props.put("common", environment.getProperty("preferenceServer.common").toString());
 	props.put("reg", environment.getProperty("preferenceServer.reg").toString());
 
-	return PreferencesDataManagerFactory.createPreferenceManager(environment.getProperty("preferenceSource.name").toString(), props);
+	return PreferencesDataManagerFactory.createPreferenceManager(environment.getProperty("preferenceSource.name").toString(), props, environment);
     }
 
     @Bean

@@ -70,9 +70,11 @@
 				</div>
 			</c:if>
 			
-<%-- 				<c:if test="${not empty post.comments}">
-				<ul class="commentImagedList">
-					 <c:forEach items="${post.comments}" var="comment">
+			<c:catch var="exception">${post.comments != null && not empty post.comments}</c:catch>
+			<c:if test="${not empty exception && not empty post.comments}">
+		
+<%-- 					<ul class="commentImagedList">
+					  <c:forEach items="${post.comments}" var="comment">
 					 <li class="commentImagedItem">
 						<div class="commentImage">
 							<img src="http://graph.facebook.com/<c:out value="${comment.from.id}"/>/picture" align="left"/>
@@ -130,10 +132,10 @@
 								</div>
 							</c:if>
 						 </div> 
-						 </li>
+						 </li> 
 				 	</c:forEach>
-				 </ul>
-				  </c:if> --%>
+				 </ul>--%>
+				  </c:if> 
 				 <div id="commentDiv${status.index}" style="display: none;">
 				 <ul class="commentImagedListUser"> 
 				 	<li class="commentImagedItem">
