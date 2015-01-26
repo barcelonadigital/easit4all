@@ -32,7 +32,7 @@ public class EasitProfileDaoJpa extends GenericDaoJpa<EasitProfile> implements E
 
     public EasitProfile getProfileByUserId(long userId) {
 	try {
-	    String queryString = "SELECT p FROM Profile p WHERE p.userId = :userId";
+	    String queryString = "SELECT p FROM EasitProfile p WHERE p.userId = :userId";
 	    Query querySelect = entityManager.createQuery(queryString);
 	    querySelect.setParameter("userId", userId);
 	    return (EasitProfile) querySelect.getSingleResult();

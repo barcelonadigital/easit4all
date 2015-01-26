@@ -13,6 +13,7 @@ import org.easit.dao.model.EasitAccount;
 import org.easit.dao.model.EasitApplicationPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,9 @@ public class ApplicationPreferencesController {
 
 	@Inject
 	private PreferencesDataManager preferencesData;
+	
+	@Inject
+	private Environment environment; 
 
 	@RequestMapping(value = "/user/applicationPreferences", method = RequestMethod.GET)
 	public String showPreferencesGet(Principal currentUser, Model model) {
@@ -61,6 +65,7 @@ public class ApplicationPreferencesController {
 			logger.error(e.getMessage());
 			// e.printStackTrace();
 		}
+		
 		return "applicationPreferences";
 	}
 
