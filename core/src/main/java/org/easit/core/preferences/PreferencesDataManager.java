@@ -9,7 +9,7 @@ import org.springframework.core.env.Environment;
  */
 public interface PreferencesDataManager {
 
-    void createDefaultPreferences( Environment environment, EasitAccount user ) throws Exception;
+	EasitApplicationPreferences createDefaultPreferences( Environment environment, EasitAccount user ) throws Exception;
     
     void insertOrUpdatePreferences(EasitApplicationPreferences preferences, EasitAccount user) throws Exception;
 

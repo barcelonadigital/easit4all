@@ -20,10 +20,17 @@ public class DataBasePreferencesManager implements PreferencesDataManager {
     /**
      * Create the default prefs
      */
-    public void createDefaultPreferences( Environment environment, EasitAccount user ){
-    	//Create the default prefs
-    	int i = 1;
-    	i++;
+    public EasitApplicationPreferences createDefaultPreferences( Environment environment, EasitAccount user ){
+		//Create the default preferences
+		EasitApplicationPreferences defaultPref = new EasitApplicationPreferences(  environment.getProperty("textFont"), environment.getProperty("theme"), Integer.parseInt(environment.getProperty("textSize")),
+				Integer.parseInt(environment.getProperty("lineSpacing")), Boolean.parseBoolean(environment.getProperty("layout")), Boolean.parseBoolean(environment.getProperty("toc")),
+				Boolean.parseBoolean(environment.getProperty("links")), Boolean.parseBoolean(environment.getProperty("inputsLarger")), Integer.parseInt(environment.getProperty("magnification")),
+				Boolean.parseBoolean(environment.getProperty("invertImages")), environment.getProperty("tracking"));
+		
+		//Insert it the database
+		insertOrUpdatePreferences( defaultPref,  user);
+		
+		return defaultPref; 
     }
     
     /**

@@ -40,107 +40,107 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 @Controller
 public class FacebookPhotosController {
 
-    private final Facebook facebook;
+	private final Facebook facebook;
 
-    @Inject
-    public FacebookPhotosController(Facebook facebook) {
-	this.facebook = facebook;
-    }
-
-    @ExceptionHandler(MissingAuthorizationException.class)
-    public String handleAuthorizationException(Principal currentUser) {
-	return "redirect:/connect/facebook";
-    }
-
-    private Resource getUploadResource(final String filename, CommonsMultipartFile content) {
-	Resource a = new ByteArrayResource(content.getBytes()) {
-	    public String getFilename() throws IllegalStateException {
-		return filename;
-	    };
-	};
-	return a;
-    }
-
-    @RequestMapping(value = "/facebook/albums", method = RequestMethod.GET)
-    public String showAlbums(Model model, String offset) {
-	int int_offset = 0;
-	int listSize = 0;
-	if (offset != null) {
-	    int_offset = Integer.valueOf(offset);
+	@Inject
+	public FacebookPhotosController(Facebook facebook) {
+		this.facebook = facebook;
 	}
 
-	listSize = facebook.mediaOperations().getAlbums().size();
+	@ExceptionHandler(MissingAuthorizationException.class)
+	public String handleAuthorizationException(Principal currentUser) {
+		return "redirect:/connect/facebook";
+	}
 
-	List<Album> albums = facebook.mediaOperations().getAlbums(int_offset, PSMetadata.FACEBOOK_LIMIT_RESULT);
-	model.addAttribute("offset", int_offset);
-	model.addAttribute("pageSize", listSize);
-	model.addAttribute("albums", albums);
-	return "facebook/albums";
-    }
+	private Resource getUploadResource(final String filename, CommonsMultipartFile content) {
+		Resource a = new ByteArrayResource(content.getBytes()) {
+			public String getFilename() throws IllegalStateException {
+				return filename;
+			};
+		};
+		return a;
+	}
 
-    @RequestMapping(value = "/facebook/albums/{albumId}", method = RequestMethod.GET)
-    public String showAlbum(@PathVariable("albumId") String albumId, Model model) {
-	model.addAttribute("album", facebook.mediaOperations().getAlbum(albumId));
-	List<Photo> photos = facebook.mediaOperations().getPhotos(albumId);
+	@RequestMapping(value = "/facebook/albums", method = RequestMethod.GET)
+	public String showAlbums(Model model, String offset) {
+		int int_offset = 0;
+		int listSize = 0;
+		if (offset != null) {
+			int_offset = Integer.valueOf(offset);
+		}
+
+		listSize = facebook.mediaOperations().getAlbums().size();
+
+		List<Album> albums = facebook.mediaOperations().getAlbums(int_offset, PSMetadata.FACEBOOK_LIMIT_RESULT);
+		model.addAttribute("offset", int_offset);
+		model.addAttribute("pageSize", listSize);
+		model.addAttribute("albums", albums);
+		return "facebook/albums";
+	}
+
+	@RequestMapping(value = "/facebook/albums/{albumId}", method = RequestMethod.GET)
+	public String showAlbum(@PathVariable("albumId") String albumId, Model model) {
+		model.addAttribute("album", facebook.mediaOperations().getAlbum(albumId));
+		List<Photo> photos = facebook.mediaOperations().getPhotos(albumId);
+		/*
+		 * List<List<Comment>> comments = new ArrayList<List<Comment>>();
+		 * for(Photo photo:photos) {
+		 * comments.add(facebook.feedOperations().getComments(photo.getId())); }
+		 * model.addAttribute("comments", comments);
+		 */
+		model.addAttribute("photos", photos);
+		model.addAttribute("userProf", facebook.userOperations().getUserProfile());
+		return "facebook/albums/album";
+	}
+
 	/*
-	 * List<List<Comment>> comments = new ArrayList<List<Comment>>();
-	 * for(Photo photo:photos) {
-	 * comments.add(facebook.feedOperations().getComments(photo.getId())); }
-	 * model.addAttribute("comments", comments);
+	 * Show form to upload photo
 	 */
-	model.addAttribute("photos", photos);
-	model.addAttribute("userProf", facebook.userOperations().getUserProfile());
-	return "facebook/albums/album";
-    }
-
-    /*
-     * Show form to upload photo
-     */
-    @RequestMapping(value = "/facebook/albums/upload", method = RequestMethod.GET)
-    public String uploadForm(String id, String name, Model model) {
-	model.addAttribute(new UploadItem());
-	model.addAttribute("album", id);
-	model.addAttribute("albumName", name);
-	return "facebook/albums/upload";
-    }
-
-    /*
-     * Uploads a photo to an album created specifically for the application.
-     * Requires "publish_stream" permission. If no album exists for the
-     * application, it will be created.
-     */
-    @RequestMapping(value = "/facebook/albums/upload", method = RequestMethod.POST)
-    public String uploadPhoto(@Valid UploadItem uploadItem, BindingResult result) {
-	if (result.hasErrors()) {
-	    return null;
+	@RequestMapping(value = "/facebook/albums/upload", method = RequestMethod.GET)
+	public String uploadForm(String id, String name, Model model) {
+		model.addAttribute(new UploadItem());
+		model.addAttribute("album", id);
+		model.addAttribute("albumName", name);
+		return "facebook/albums/upload";
 	}
-	Resource photo = getUploadResource(uploadItem.getFileData().getOriginalFilename(), uploadItem.getFileData());
-	facebook.mediaOperations().postPhoto(photo, uploadItem.getCaption());
-	return "redirect:/facebook/albums";
-    }
 
-    @RequestMapping(value = "/facebook/albums/upload/{albumId}", method = RequestMethod.POST)
-    public String uploadPhotoToAlbum(@PathVariable("albumId") String albumId, @Valid UploadItem uploadItem, BindingResult result) {
-	if (result.hasErrors()) {
-	    return null;
-	}
-	Resource photo = getUploadResource(uploadItem.getFileData().getOriginalFilename(), uploadItem.getFileData());
 	/*
 	 * Uploads a photo to an album created specifically for the application.
 	 * Requires "publish_stream" permission. If no album exists for the
 	 * application, it will be created.
 	 */
-	if (albumId == null) {
-	    facebook.mediaOperations().postPhoto(photo, uploadItem.getCaption());
-	    return "redirect:/facebook/albums";
+	@RequestMapping(value = "/facebook/albums/upload", method = RequestMethod.POST)
+	public String uploadPhoto(@Valid UploadItem uploadItem, BindingResult result) {
+		if (result.hasErrors()) {
+			return null;
+		}
+		Resource photo = getUploadResource(uploadItem.getFileData().getOriginalFilename(), uploadItem.getFileData());
+		facebook.mediaOperations().postPhoto(photo, uploadItem.getCaption());
+		return "redirect:/facebook/albums";
 	}
-	/*
-	 * Uploads a photo to the espeficied album.
-	 */
-	else {
-	    facebook.mediaOperations().postPhoto(albumId, photo, uploadItem.getCaption());
-	    return "redirect:/facebook/albums/{albumId}";
+
+	@RequestMapping(value = "/facebook/albums/upload/{albumId}", method = RequestMethod.POST)
+	public String uploadPhotoToAlbum(@PathVariable("albumId") String albumId, @Valid UploadItem uploadItem, BindingResult result) {
+		if (result.hasErrors()) {
+			return null;
+		}
+		Resource photo = getUploadResource(uploadItem.getFileData().getOriginalFilename(), uploadItem.getFileData());
+		/*
+		 * Uploads a photo to an album created specifically for the application.
+		 * Requires "publish_stream" permission. If no album exists for the
+		 * application, it will be created.
+		 */
+		if (albumId == null) {
+			facebook.mediaOperations().postPhoto(photo, uploadItem.getCaption());
+			return "redirect:/facebook/albums";
+		}
+		/*
+		 * Uploads a photo to the espeficied album.
+		 */
+		else {
+			facebook.mediaOperations().postPhoto(albumId, photo, uploadItem.getCaption());
+			return "redirect:/facebook/albums/{albumId}";
+		}
 	}
-    }
 
 }

@@ -33,53 +33,57 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 public class SimpleSignInAdapter implements SignInAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(SimpleSignInAdapter.class);
+	private static final Logger logger = LoggerFactory.getLogger(SimpleSignInAdapter.class);
 
-    private final RequestCache requestCache;
+	private final RequestCache requestCache;
 
-    private AfterLoginSuccessHandler loginSuccess;
+	private AfterLoginSuccessHandler loginSuccess;
 
-    @Inject
-    public SimpleSignInAdapter(RequestCache requestCache, AfterLoginSuccessHandler loginSuccess) {
+	@Inject
+	//Depercated
+	public SimpleSignInAdapter(RequestCache requestCache, AfterLoginSuccessHandler loginSuccess) {
 		this.requestCache = requestCache;
 		this.loginSuccess = loginSuccess;
-    }
-
-    public String signIn(String localUserId, NativeWebRequest request) {
-	HttpServletRequest req = request.getNativeRequest(HttpServletRequest.class);
-	Authentication auth = SignInUtils.signin(localUserId);
-	String originalUrl = extractOriginalUrl(request);
-
-	try {
-	    loginSuccess.setAttributesInSession(req, auth);
-	} catch (Exception e) {
-	    logger.error(e.getMessage());
 	}
-	return originalUrl;
-    }
 
-    private String extractOriginalUrl(NativeWebRequest request) {
-	HttpServletRequest nativeReq = request.getNativeRequest(HttpServletRequest.class);
-	HttpServletResponse nativeRes = request.getNativeResponse(HttpServletResponse.class);
-	SavedRequest saved = requestCache.getRequest(nativeReq, nativeRes);
-	if (saved == null) {
-	    return null;
+	//Depercated
+	public String signIn(String localUserId, NativeWebRequest request) {
+		HttpServletRequest req = request.getNativeRequest(HttpServletRequest.class);
+		Authentication auth = SignInUtils.signin(localUserId);
+		String originalUrl = extractOriginalUrl(request);
+
+		try {
+			loginSuccess.setAttributesInSession(req, auth);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return originalUrl;
 	}
-	requestCache.removeRequest(nativeReq, nativeRes);
-	removeAutheticationAttributes(nativeReq.getSession(false));
-	return saved.getRedirectUrl();
-    }
 
-    private void removeAutheticationAttributes(HttpSession session) {
-	if (session == null) {
-	    return;
+	//Depercated
+	private String extractOriginalUrl(NativeWebRequest request) {
+		HttpServletRequest nativeReq = request.getNativeRequest(HttpServletRequest.class);
+		HttpServletResponse nativeRes = request.getNativeResponse(HttpServletResponse.class);
+		SavedRequest saved = requestCache.getRequest(nativeReq, nativeRes);
+		if (saved == null) {
+			return null;
+		}
+		requestCache.removeRequest(nativeReq, nativeRes);
+		removeAutheticationAttributes(nativeReq.getSession(false));
+		return saved.getRedirectUrl();
 	}
-	session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-    }
 
-    @Override
-    public String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
-	return null;
-    }
+	//Depercated
+	private void removeAutheticationAttributes(HttpSession session) {
+		if (session == null) {
+			return;
+		}
+		session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+	}
+
+	@Override
+	public String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
+		return null;
+	}
 
 }

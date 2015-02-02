@@ -50,7 +50,7 @@ public class AccountController {
 
 	EasitAccount current = (EasitAccount) request.getSession().getAttribute("user");
 	EasitAccount account;
-	account = updateAccount(currentUser, form, formBinding);
+	account = updateAccount(currentUser, form, formBinding, current);
 	account.setId(current.getId());
 	if (account != null) {
 	    request.getSession().removeAttribute("user");
@@ -62,8 +62,8 @@ public class AccountController {
 
     // internal helpers
 
-    private EasitAccount updateAccount(Principal currentUser, SignupForm form, BindingResult formBinding) {
-	EasitAccount account = new EasitAccount(currentUser.getName(), form.getPassword(), form.getFirstName(), form.getLastName(), form.getEmail(), "");
+    private EasitAccount updateAccount(Principal currentUser, SignupForm form, BindingResult formBinding, EasitAccount current) {
+	EasitAccount account = new EasitAccount(currentUser.getName(), form.getPassword(), form.getFirstName(), form.getLastName(), form.getEmail(), current.getUserToken());
 	try {
 	    accountRepository.changeAccountSettings(account, passwordEncoder);
 	    return account;

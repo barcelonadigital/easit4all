@@ -39,7 +39,8 @@ public class ProfileController {
 	skillLevel.add("high");
 	EasitAccount res = accountRepository.findAccountByUsername(currentUser.getName());
 	model.addAttribute(new ProfileForm());
-	model.addAttribute("profile", profileRepository.getProfileByUserId(res.getId()));
+	EasitProfile easitProfile = profileRepository.getProfileByUserId(res.getId());
+	model.addAttribute("profile", easitProfile);
 	model.addAttribute("skillLevel", skillLevel);
 	return "profile";
     }

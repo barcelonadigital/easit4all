@@ -61,7 +61,7 @@ public class FacebookFeedController {
 		
 		//Get the posts
 		int fromIndex = int_offset;
-		int toIndex = fromIndex + PSMetadata.TWITTER_LIMIT_RESULT;
+		int toIndex = fromIndex + PSMetadata.FACEBOOK_LIMIT_RESULT;
 		List<Post> posts = facebook.feedOperations().getFeed(0, PSMetadata.MAX_RESULTS_SEARCH);
 		toIndex = Math.min(toIndex, posts.size());
 		

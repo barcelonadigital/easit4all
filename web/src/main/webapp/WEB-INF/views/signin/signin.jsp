@@ -39,20 +39,9 @@
 			</div>				
 			<form class="ym-form" id="signin" action="<c:url value="/signin/authenticate" />" method="post">
 				<div class="ym-columnar">
-				<fieldset style="border:0px">
-					<div class="ym-fbox-text">
-						<label for="login">Username</label>
-						<input id="login" name="j_username" autofocus="autofocus" type="text" size="25" <c:if test="${not empty signinErrorMessage}">value="${SPRING_SECURITY_LAST_USERNAME}"</c:if> />
-					</div>
-					<div class="ym-fbox-text">
-						<label for="password">Password</label>
-						<input id="password" name="j_password" type="password" size="25" />	
-					</div>
-				</fieldset>
 				<div class="ym-fbox-button">
-					<button type="submit" title="Sign in" class="ym-button">Sign in</button>
-					<!-- class="ym-button ym-disabled" href="<c:url value="/signup"/>"  --> 
-					<a title="Sign up" class="ym-button" href="<c:url value="/signup"/>" style="float: right;">Sign up</a>
+					<a title="Sign in" class="ym-button" href="<c:url value="/oauth_signin"/>">Sign in</a>
+					<a title="Sign up" class="ym-button ym-disabled " href="<c:url value="oauth_signup"/>" style="float: right;">Sign up</a>
 				</div>
 				</div>
 			</form>

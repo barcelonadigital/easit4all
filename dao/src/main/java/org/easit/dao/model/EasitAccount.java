@@ -30,6 +30,8 @@ public class EasitAccount implements DomainObject {
     String email;
 
     String userToken;
+    
+    String accessToken;
 
     public EasitAccount() {
 
@@ -43,6 +45,7 @@ public class EasitAccount implements DomainObject {
 	this.lastName = lastName;
 	this.email = email;
 	this.userToken = userToken;
+	this.accessToken = "";
     }
 
     public long getId() {
@@ -100,5 +103,15 @@ public class EasitAccount implements DomainObject {
     public void setUserToken(String userToken) {
 	this.userToken = userToken;
     }
+    
+    public String getAccessToken() {
+	return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+	this.accessToken = accessToken;
+    }
+    
+    
 
 }
